@@ -4,6 +4,8 @@
 
 A simple app for viewing lists of popular movies, tv shows and peoples.
 
+###### Provided by ![TheMovieDB](https://www.themoviedb.org/)
+
 ## Features
 
 - Select list and item type (popular/top rated)
