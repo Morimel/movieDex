@@ -14,13 +14,21 @@ struct Person: MDBItem {
     let gender: Int
     let profilePath: String
     let popularity: Double
+    let birthday: String?
+    let deathday: String?
     
     var titleString: String {
         return name
     }
     
     var dateString: Date? {
-        return nil
+        if let day = birthday,
+              !day.isEmpty {
+                return dateFormatter.date(from: day)
+        } else {
+            return nil
+    }
+        
     }
     
     var descriptionString: String {

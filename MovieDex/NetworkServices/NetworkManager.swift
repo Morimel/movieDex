@@ -23,13 +23,18 @@ class NetworkManager {
     
     func fetchDetailedData<Item: MDBItem>(for item: Item) async -> Item? {
         let type: MDBItemType
-        if let _ = item as? Movie {
+        
+        switch item {
+        case is Movie:
             type = .movie
-        } else if let _ = item as? TVShow {
+        case is TVShow:
             type = .tvShow
-        } else {
+        case is Person:
             type = .person
+        default:
+            return nil
         }
+        
         guard let url = urlManager.detailedURL(for: type, id: item.id) else { return nil }
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase

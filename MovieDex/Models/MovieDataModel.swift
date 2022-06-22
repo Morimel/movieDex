@@ -18,6 +18,10 @@ struct Movie: MDBItem {
     let voteAverage: Double
     let voteCount: Int
     
+    let backdropPath: String?
+    let runtime: Int?
+    let tagline: String?
+    
     var dateString: Date? {
         if releaseDate.isEmpty {
             return nil

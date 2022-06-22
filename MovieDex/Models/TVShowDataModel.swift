@@ -18,6 +18,8 @@ struct TVShow: MDBItem {
     let voteAverage: Double
     let voteCount: Int
     
+    let tagline: String?
+    
     var titleString: String {
         return name
     }
