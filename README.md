@@ -4,7 +4,7 @@
 
 A simple app for viewing lists of popular movies, tv shows and peoples.
 
-###### Provided by ![TheMovieDB](https://www.themoviedb.org/)
+###### Provided by [TheMovieDB](https://www.themoviedb.org/)
 
 ## Features
 
