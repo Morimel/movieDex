@@ -10,12 +10,17 @@ import Foundation
 struct Person: MDBItem {
     
     var id: Int
+    let type: MDBItemType = .person
     let name: String
     let gender: Int
     let profilePath: String
     let popularity: Double
     let birthday: String?
     let deathday: String?
+    
+    private enum CodingKeys: String, CodingKey {
+        case id, name, gender, profilePath, popularity, birthday, deathday
+    }
     
     var titleString: String {
         return name

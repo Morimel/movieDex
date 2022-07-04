@@ -24,24 +24,31 @@ class DetailedViewModel: ObservableObject {
     @Published var person: Person?
     
     func fetchDetails() async {
-        switch currentItem {
-        case is Movie:
+        guard let currentItem = currentItem else { return }
+        switch currentItem.type {
+        case .movie:
             let detailedMovie = await networkManager.fetchDetailedData(for: currentItem as! Movie)
             DispatchQueue.main.async {
                 self.movie = detailedMovie
             }
-        case is TVShow:
+        case .tvShow:
             let detailedTVShow = await networkManager.fetchDetailedData(for: currentItem as! TVShow)
             DispatchQueue.main.async {
                 self.tvShow = detailedTVShow
             }
-        case is Person:
+        case .person:
             let detailedPerson = await networkManager.fetchDetailedData(for: currentItem as! Person)
             DispatchQueue.main.async {
                 self.person = detailedPerson
             }
-        default:
-            break
         }
     }
+    
+    func getImageUrl(size: MDBImageSize, path: String?) -> URL? {
+        guard let path = path else {
+            return nil
+        }
+        return networkManager.imageURL(size: size, path: path)
+    }
+    
 }

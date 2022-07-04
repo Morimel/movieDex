@@ -48,7 +48,7 @@ extension FeedView {
             .searchable(text: $viewModel.searchText,
                         placement: .navigationBarDrawer(displayMode: .always),
                         prompt: "Type movie title")
-            .navigationTitle("All movies")
+            .navigationBarTitle("All movies", displayMode: .inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {

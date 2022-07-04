@@ -10,6 +10,7 @@ import Foundation
 struct TVShow: MDBItem {
     
     var id: Int
+    let type: MDBItemType = .tvShow
     let originalName: String
     let name: String
     let overview: String
@@ -19,6 +20,10 @@ struct TVShow: MDBItem {
     let voteCount: Int
     
     let tagline: String?
+    
+    private enum CodingKeys: String, CodingKey {
+        case id, originalName, name, overview, posterPath, firstAirDate, voteAverage, voteCount, tagline
+    }
     
     var titleString: String {
         return name

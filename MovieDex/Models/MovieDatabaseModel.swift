@@ -10,7 +10,8 @@ import Foundation
 // MDB - Movie Database
 
 protocol MDBItem: Decodable {
-    var id: Int {get}
+    var id: Int { get }
+    var type: MDBItemType { get }
     var titleString: String { get }
     var dateString: Date? { get }
     var descriptionString: String { get }
@@ -59,5 +60,13 @@ enum MDBImageSize: String, URLPathItemType {
 let dateFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateFormat = "yyyy-MM-dd"
+    return formatter
+}()
+
+let timeFormatter: DateComponentsFormatter = {
+    let formatter = DateComponentsFormatter()
+    formatter.unitsStyle = .abbreviated
+    formatter.zeroFormattingBehavior = .dropAll
+    formatter.allowedUnits = [.hour, .minute, .second]
     return formatter
 }()

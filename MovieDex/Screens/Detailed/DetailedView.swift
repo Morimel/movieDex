@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CachedAsyncImage
 
 struct DetailedView<Item: MDBItem>: View {
     
@@ -14,25 +15,28 @@ struct DetailedView<Item: MDBItem>: View {
     var item: Item
     
     var body: some View {
-        switch item {
-        case is Movie:
-            setupMovieView()
-        case is TVShow:
-            setupTVShowView()
-        case is Person:
-            setupPersonView()
-        default:
-            Text("error")
+        GeometryReader { geometry in
+            switch item.type {
+            case .movie:
+                setupMovieView(with: geometry)
+            case .tvShow:
+                setupTVShowView()
+            case .person:
+                setupPersonView()
+            }
         }
     }
 }
 
 extension DetailedView {
-    func setupMovieView() -> some View {
+    func setupMovieView(with geometry: GeometryProxy) -> some View {
+        
+        let frame = geometry.frame(in: .global)
+        
         if viewModel.currentItem == nil {
             viewModel.currentItem = item
         }
-        guard let safeMovie = viewModel.movie else {
+        guard let movie = viewModel.movie else {
             return AnyView(
                 ProgressView()
                     .progressViewStyle(.circular)
@@ -40,11 +44,57 @@ extension DetailedView {
         }
         return AnyView(
             VStack {
-                Text(safeMovie.title)
-                Text(safeMovie.dateString!,style: .date)
-                Text(safeMovie.tagline ?? "")
-                Text("\(safeMovie.runtime ?? 0)")
+                ZStack(alignment: .bottom) {
+                    CachedAsyncImage(url: viewModel.getImageUrl(size: .backdrop, path: movie.backdropPath)) { image in
+                        image.resizable()
+                            .scaledToFill()
+                            .frame(height: frame.height * 0.4)
+                            .frame(minWidth: .zero, maxWidth: .infinity)
+                            .clipped()
+                            .overlay(
+                                LinearGradient(stops: [.init(color: Color(uiColor: .systemBackground), location: 0.0),
+                                                       .init(color: .black.opacity(0.0), location: 0.7),
+                                                       .init(color: Color(uiColor: .systemBackground), location: 1.0)],
+                                               startPoint: .bottom,
+                                               endPoint: .top)
+                            )
+                    } placeholder: {
+                        ProgressView().progressViewStyle(.circular)
+                    }
+                    Text(movie.title)
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.1)
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(.primary)
+                        .padding(10)
+                        .shadow(color: Color(uiColor: .systemBackground), radius: 1)
+                        .shadow(color: Color(uiColor: .systemBackground), radius: 1)
+                        .shadow(color: Color(uiColor: .systemBackground), radius: 1)
+                }
+                ScrollView {
+                    VStack {
+                        Text(movie.originalTitle)
+                        HStack {
+                            Spacer()
+                            if let date = movie.dateString {
+                                Text(date, style: .date)
+                                    .font(.subheadline)
+                            }
+                            if let time = movie.timeString {
+                                Spacer()
+                                Text(time)
+                                    .font(.subheadline)
+                            }
+                            Spacer()
+                        }
+                    }
+                }
+                Spacer()
             }
+                
+                .ignoresSafeArea()
         )
     }
     
@@ -52,7 +102,7 @@ extension DetailedView {
         if viewModel.currentItem == nil {
             viewModel.currentItem = item
         }
-        guard let safeTVShow = viewModel.tvShow else {
+        guard let tvShow = viewModel.tvShow else {
             return AnyView(
                 ProgressView()
                     .progressViewStyle(.circular)
@@ -60,9 +110,9 @@ extension DetailedView {
         }
         return AnyView(
             VStack {
-                Text(safeTVShow.name)
-                Text(safeTVShow.dateString!,style: .date)
-                Text(safeTVShow.tagline ?? "")
+                Text(tvShow.name)
+                Text(tvShow.dateString!,style: .date)
+                Text(tvShow.tagline ?? "")
             }
         )
     }
@@ -70,7 +120,7 @@ extension DetailedView {
         if viewModel.currentItem == nil {
             viewModel.currentItem = item
         }
-        guard let safePerson = viewModel.person else {
+        guard let person = viewModel.person else {
             return AnyView(
                 ProgressView()
                     .progressViewStyle(.circular)
@@ -78,9 +128,9 @@ extension DetailedView {
         }
         return AnyView(
             VStack {
-                Text(safePerson.name)
-                Text("Gender: \(safePerson.gender)")
-                Text(safePerson.dateString!,style: .date)
+                Text(person.name)
+                Text("Gender: \(person.gender)")
+                Text(person.dateString!,style: .date)
             }
         )
     }

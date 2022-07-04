@@ -10,6 +10,7 @@ import Foundation
 struct Movie: MDBItem {
     
     var id: Int
+    var type: MDBItemType = .movie
     let originalTitle: String
     let title: String
     let overview: String
@@ -22,12 +23,22 @@ struct Movie: MDBItem {
     let runtime: Int?
     let tagline: String?
     
+    private enum CodingKeys: String, CodingKey {
+        case id, originalTitle, title, overview, posterPath, releaseDate, voteAverage, voteCount, backdropPath, runtime, tagline
+    }
+    
     var dateString: Date? {
         if releaseDate.isEmpty {
             return nil
         } else {
             return dateFormatter.date(from: releaseDate)
         }
+    }
+    
+    var timeString: String? {
+        guard let runtime = runtime, runtime > 0 else { return nil }
+        print("\(runtime)")
+        return timeFormatter.string(from: TimeInterval(runtime * 60))
     }
     
     var titleString: String {
@@ -51,13 +62,6 @@ struct Movie: MDBItem {
     }
     
     //let genres: [Genre]
-}
-
-struct MovieDetails: Decodable {
-    let backdropPath: String?
-    let runtime: Int?
-    let tagline: String?
-    
 }
 
 struct Genre: Decodable {
