@@ -35,10 +35,10 @@ extension FeedView {
                               spacing: viewModel.spacing,
                               cellViewBuilder: { item in
             GridCell(item: item,
-                     isLiked: viewModel.isItemLiked(with: item.id),
+                     isLiked: viewModel.isItemLiked(item),
                      cellType: viewModel.gridView ? .short : .detailed,
                      imageURL: viewModel.getImageUrl(path: item.mainImagePath),
-                     likePressed: { id in viewModel.likePressed(id: id) })
+                     likePressed: { item in viewModel.likePressed(for: item) })
                 .onAppear {
                     Task {
                         await viewModel.loadMoreContent(currentItem: item, in: data)
@@ -76,6 +76,9 @@ extension FeedView {
                         Image(systemName: "slider.horizontal.3")
                     }
                 }
+            }
+            .onAppear {
+                viewModel.reloadLikes()
             }
     }
 }

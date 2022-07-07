@@ -50,9 +50,6 @@ class FeedViewModel: ObservableObject {
     }
     
     init() {
-        likedMovies = Set(userDefaults.array(forKey: "likedMovies") as? [Int] ?? [])
-        likedTVShows = Set(userDefaults.array(forKey: "likedTVShows") as? [Int] ?? [])
-        likedPersons = Set(userDefaults.array(forKey: "likedPersons") as? [Int] ?? [])
         reloadList()
         networkManager.delegate = self
     }
@@ -62,43 +59,6 @@ class FeedViewModel: ObservableObject {
             cols = 2
         } else {
             cols = 1
-        }
-    }
-    
-    func isItemLiked(with id: Int) -> Bool {
-        switch currentItemType {
-        case .movie:
-            return likedMovies.contains(id)
-        case .tvShow:
-            return likedTVShows.contains(id)
-        case .person:
-            return likedPersons.contains(id)
-        }
-    }
-    
-    func likePressed(id: Int) {
-        switch currentItemType {
-        case .movie:
-            if likedMovies.contains(id) {
-                likedMovies.remove(id)
-            } else {
-                likedMovies.insert(id)
-            }
-            userDefaults.set(Array(likedMovies), forKey: "likedMovies")
-        case .tvShow:
-            if likedTVShows.contains(id) {
-                likedTVShows.remove(id)
-            } else {
-                likedTVShows.insert(id)
-            }
-            userDefaults.set(Array(likedTVShows), forKey: "likedTVShows")
-        case .person:
-            if likedPersons.contains(id) {
-                likedPersons.remove(id)
-            } else {
-                likedPersons.insert(id)
-            }
-            userDefaults.set(Array(likedPersons), forKey: "likedPersons")
         }
     }
     
@@ -162,4 +122,51 @@ extension FeedViewModel: NetworkManagerDelegate {
     }
     
     
+}
+
+extension FeedViewModel {
+    func reloadLikes() {
+        likedMovies = Set(userDefaults.array(forKey: "likedMovies") as? [Int] ?? [])
+        likedTVShows = Set(userDefaults.array(forKey: "likedTVShows") as? [Int] ?? [])
+        likedPersons = Set(userDefaults.array(forKey: "likedPersons") as? [Int] ?? [])
+    }
+    
+    func isItemLiked(_ item: MDBItem) -> Bool {
+        let id = item.id
+        switch item.type {
+        case .movie:
+            return likedMovies.contains(id)
+        case .tvShow:
+            return likedTVShows.contains(id)
+        case .person:
+            return likedPersons.contains(id)
+        }
+    }
+    
+    func likePressed(for item: MDBItem) {
+        let id = item.id
+        switch item.type {
+        case .movie:
+            if likedMovies.contains(id) {
+                likedMovies.remove(id)
+            } else {
+                likedMovies.insert(id)
+            }
+            userDefaults.set(Array(likedMovies), forKey: "likedMovies")
+        case .tvShow:
+            if likedTVShows.contains(id) {
+                likedTVShows.remove(id)
+            } else {
+                likedTVShows.insert(id)
+            }
+            userDefaults.set(Array(likedTVShows), forKey: "likedTVShows")
+        case .person:
+            if likedPersons.contains(id) {
+                likedPersons.remove(id)
+            } else {
+                likedPersons.insert(id)
+            }
+            userDefaults.set(Array(likedPersons), forKey: "likedPersons")
+        }
+    }
 }

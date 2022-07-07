@@ -10,6 +10,8 @@ import CachedAsyncImage
 
 struct DetailedView<Item: MDBItem>: View {
     
+    @Environment(\.dismiss) private var dismiss
+    
     @StateObject var viewModel = DetailedViewModel()
     
     var item: Item
@@ -23,6 +25,15 @@ struct DetailedView<Item: MDBItem>: View {
                 setupTVShowView()
             case .person:
                 setupPersonView()
+            }
+        }
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                navBackButton()
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                navLikeButton()
             }
         }
     }
@@ -53,7 +64,8 @@ extension DetailedView {
                             .clipped()
                             .overlay(
                                 LinearGradient(stops: [.init(color: Color(uiColor: .systemBackground), location: 0.0),
-                                                       .init(color: .black.opacity(0.0), location: 0.7),
+                                                       .init(color: Color(uiColor: .systemBackground).opacity(0.0), location: 0.5),
+                                                       .init(color: Color(uiColor: .systemBackground).opacity(0.0), location: 0.7),
                                                        .init(color: Color(uiColor: .systemBackground), location: 1.0)],
                                                startPoint: .bottom,
                                                endPoint: .top)
@@ -68,33 +80,67 @@ extension DetailedView {
                         .minimumScaleFactor(0.1)
                         .multilineTextAlignment(.center)
                         .foregroundColor(.primary)
-                        .padding(10)
+                        .padding([.leading, .trailing], 10)
                         .shadow(color: Color(uiColor: .systemBackground), radius: 1)
                         .shadow(color: Color(uiColor: .systemBackground), radius: 1)
                         .shadow(color: Color(uiColor: .systemBackground), radius: 1)
                 }
                 ScrollView {
-                    VStack {
-                        Text(movie.originalTitle)
-                        HStack {
-                            Spacer()
-                            if let date = movie.dateString {
-                                Text(date, style: .date)
-                                    .font(.subheadline)
+                    VStack(alignment: .leading) {
+                        HStack(alignment: .top) {
+                            CachedAsyncImage(url: viewModel.getImageUrl(size: .poster, path: movie.posterPath)) { image in
+                                image.resizable()
+                                    .scaledToFill()
+                                    .frame(width: frame.width * 0.3)
+                            } placeholder: {
+                                ProgressView().progressViewStyle(.circular)
                             }
-                            if let time = movie.timeString {
-                                Spacer()
-                                Text(time)
-                                    .font(.subheadline)
+                            VStack(alignment: .leading, spacing: 10) {
+                                Text(movie.originalTitle)
+                                    .font(.headline)
+                                    .lineLimit(2)
+                                    .minimumScaleFactor(0.1)
+                                if let tagline = movie.tagline,
+                                   tagline != "" {
+                                    Text(tagline)
+                                        .font(.subheadline)
+                                        .fontWeight(.light)
+                                        .lineLimit(2)
+                                        .minimumScaleFactor(0.1)
+                                }
+                                if let genres = movie.genres,
+                                   !genres.isEmpty {
+                                    printGenres(genres)
+                                }
+                                if let date = movie.dateString {
+                                    Label {
+                                        Text(date, style: .date)
+                                            .font(.subheadline)
+                                    } icon: {
+                                        Image(systemName: "calendar")
+                                    }
+                                }
+                                if let time = movie.timeString {
+                                    Label {
+                                        Text(time)
+                                            .font(.subheadline)
+                                    } icon: {
+                                        Image(systemName: "timer")
+                                    }
+                                }
                             }
                             Spacer()
                         }
+                        if let overview = movie.overview {
+                            Text(overview)
+                        }
+                        
                     }
+                    .padding([.leading, .trailing], 10)
                 }
                 Spacer()
             }
-                
-                .ignoresSafeArea()
+                .edgesIgnoringSafeArea([.top, .leading, .trailing])
         )
     }
     
@@ -134,6 +180,18 @@ extension DetailedView {
             }
         )
     }
+    
+    func printGenres(_ genres: [Genre]) -> some View {
+        
+        var baseString = ""
+        
+        genres.forEach { item in
+            baseString += "\(item.name?.capitalized ?? "") "
+        }
+        return Text(baseString)
+            .font(.subheadline)
+            .fontWeight(.thin)
+    } 
 }
 
 
@@ -142,3 +200,32 @@ extension DetailedView {
 //        DetailsView()
 //    }
 //}
+
+extension DetailedView {
+    
+    func navBackButton() -> some View {
+        return Button{
+            dismiss()
+        } label: {
+            Image(systemName: "chevron.backward")
+                .imageScale(.large)
+                .foregroundColor(.primary)
+                .shadow(color: Color(uiColor: .systemBackground), radius: 1)
+                .shadow(color: Color(uiColor: .systemBackground), radius: 1)
+                .shadow(color: Color(uiColor: .systemBackground), radius: 1)
+        }
+    }
+    
+    func navLikeButton() -> some View {
+        return Button{
+            viewModel.likePressed(for: item)
+        } label: {
+            Image(systemName: viewModel.isItemLiked(item) ? "heart.fill" : "heart")
+                .imageScale(.large)
+                .foregroundColor(Color(uiColor: .systemPink))
+                .shadow(color: Color(uiColor: .systemBackground), radius: 1)
+                .shadow(color: Color(uiColor: .systemBackground), radius: 1)
+                .shadow(color: Color(uiColor: .systemBackground), radius: 1)
+        }
+    }
+}

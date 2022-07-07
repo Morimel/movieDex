@@ -23,8 +23,10 @@ struct Movie: MDBItem {
     let runtime: Int?
     let tagline: String?
     
+    let genres: [Genre]?
+    
     private enum CodingKeys: String, CodingKey {
-        case id, originalTitle, title, overview, posterPath, releaseDate, voteAverage, voteCount, backdropPath, runtime, tagline
+        case id, originalTitle, title, overview, posterPath, releaseDate, voteAverage, voteCount, backdropPath, runtime, tagline, genres
     }
     
     var dateString: Date? {
@@ -37,7 +39,6 @@ struct Movie: MDBItem {
     
     var timeString: String? {
         guard let runtime = runtime, runtime > 0 else { return nil }
-        print("\(runtime)")
         return timeFormatter.string(from: TimeInterval(runtime * 60))
     }
     
@@ -61,7 +62,6 @@ struct Movie: MDBItem {
         }
     }
     
-    //let genres: [Genre]
 }
 
 struct Genre: Decodable {
