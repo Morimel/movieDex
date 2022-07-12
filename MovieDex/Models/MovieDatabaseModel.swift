@@ -23,6 +23,11 @@ protocol URLPathItemType {
     var rawValue: String {get}
 }
 
+struct Genre: Decodable {
+    let id: Int
+    let name: String
+}
+
 struct MovieListResults: Decodable {
     let results: [Movie]
 }

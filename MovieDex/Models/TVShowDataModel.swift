@@ -19,10 +19,15 @@ struct TVShow: MDBItem {
     let voteAverage: Double
     let voteCount: Int
     
+    let lastAirDate: String?
+    let backdropPath: String?
+    let status: String?
     let tagline: String?
     
+    let genres: [Genre]?
+    
     private enum CodingKeys: String, CodingKey {
-        case id, originalName, name, overview, posterPath, firstAirDate, voteAverage, voteCount, tagline
+        case id, originalName, name, overview, posterPath, firstAirDate, voteAverage, voteCount, lastAirDate, backdropPath, status, tagline, genres
     }
     
     var titleString: String {
@@ -34,6 +39,18 @@ struct TVShow: MDBItem {
             return nil
         } else {
             return dateFormatter.date(from: firstAirDate)
+        }
+    }
+    
+    var lastAirDateString: Date? {
+        guard let lastAirDate = lastAirDate else {
+            return nil
+        }
+
+        if lastAirDate.isEmpty {
+            return nil
+        } else {
+            return dateFormatter.date(from: lastAirDate)
         }
     }
     
