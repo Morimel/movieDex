@@ -24,7 +24,7 @@ struct DetailedView<Item: MDBItem>: View {
             case .tvShow:
                 setupTVShowView(with: geometry)
             case .person:
-                setupPersonView()
+                setupPersonView(with: geometry)
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -64,17 +64,10 @@ struct DetailedView<Item: MDBItem>: View {
                         HStack(alignment: .top) {
                             PosterImage(url: viewModel.getImageUrl(size: .poster, path: movie.posterPath),
                                         width: frame.width * 0.3)
-                            SideInfo(originalTitle: movie.originalTitle,
-                                     tagline: movie.tagline,
-                                     genres: movie.genres,
-                                     releaseDate: movie.dateString,
-                                     runtime: movie.timeString)
+                            SideInfo(item: movie)
                             Spacer()
                         }
-                        if let overview = movie.overview {
-                            Text(overview)
-                        }
-                        
+                        Overview(text: movie.overview)
                     }
                     .padding([.leading, .trailing], 10)
                 }
@@ -98,7 +91,7 @@ struct DetailedView<Item: MDBItem>: View {
             )
         }
         return AnyView(
-            VStack {
+            VStack(alignment: .leading) {
                 ZStack(alignment: .bottom) {
                     BackdropImage(url: viewModel.getImageUrl(size: .backdrop, path: tvShow.backdropPath),
                                   height: frame.height * 0.4)
@@ -109,26 +102,21 @@ struct DetailedView<Item: MDBItem>: View {
                         HStack(alignment: .top) {
                             PosterImage(url: viewModel.getImageUrl(size: .poster, path: tvShow.posterPath),
                                         width: frame.width * 0.3)
-                            SideInfo(originalTitle: tvShow.originalName,
-                                     tagline: tvShow.tagline,
-                                     genres: tvShow.genres,
-                                     releaseDate: tvShow.dateString,
-                                     lastAirDate: tvShow.lastAirDateString)
+                            SideInfo(item: tvShow)
                             Spacer()
                         }
-                        if let overview = tvShow.overview {
-                            Text(overview)
-                        }
-                        
+                        Overview(text: tvShow.overview)
                     }
-                    .padding([.leading, .trailing], 10)
+                    .padding([.horizontal], 10)
                 }
-                Spacer()
             }
                 .edgesIgnoringSafeArea([.top, .leading, .trailing])
         )
     }
-    func setupPersonView() -> some View {
+    func setupPersonView(with geometry: GeometryProxy) -> some View {
+        
+        let frame = geometry.frame(in: .global)
+        
         if viewModel.currentItem == nil {
             viewModel.currentItem = item
         }
@@ -139,11 +127,20 @@ struct DetailedView<Item: MDBItem>: View {
             )
         }
         return AnyView(
-            VStack {
-                Text(person.name)
-                Text("Gender: \(person.gender)")
-                Text(person.dateString!,style: .date)
+            ScrollView {
+                VStack(alignment: .leading) {
+                    HStack(alignment: .top) {
+                        PosterImage(url: viewModel.getImageUrl(size: .poster, path: person.profilePath),
+                                    width: frame.width * 0.3)
+                        SideInfo(item: person)
+                            .border(.green)
+                        //Spacer()
+                    }
+                    Overview(text: person.biography)
+                }
+                .padding([.horizontal], 10)
             }
+                .navigationTitle(person.name)
         )
     }
 }

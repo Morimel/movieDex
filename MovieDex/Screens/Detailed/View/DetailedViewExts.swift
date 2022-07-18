@@ -72,114 +72,16 @@ extension DetailedView {
         }
     }
     
-    struct NavBarBackButton: View {
+    struct Overview: View {
         
-        let action: DismissAction
-        
-        var body: some View {
-            Button{
-                action()
-            } label: {
-                Image(systemName: "chevron.backward")
-                    .imageScale(.large)
-                    .foregroundColor(.primary)
-                    .shadow(color: Color(uiColor: .systemBackground), radius: 1)
-                    .shadow(color: Color(uiColor: .systemBackground), radius: 1)
-                    .shadow(color: Color(uiColor: .systemBackground), radius: 1)
-            }
-        }
-    }
-    
-    struct NavBarLikeButton: View {
-        
-        let action: () -> Void
-        let isLiked: Bool
+        let text: String?
         
         var body: some View {
-            Button{
-                action()
-            } label: {
-                Image(systemName: isLiked ? "heart.fill" : "heart")
-                    .imageScale(.large)
-                    .foregroundColor(Color(uiColor: .systemPink))
-                    .shadow(color: Color(uiColor: .systemBackground), radius: 1)
-                    .shadow(color: Color(uiColor: .systemBackground), radius: 1)
-                    .shadow(color: Color(uiColor: .systemBackground), radius: 1)
-            }
-        }
-    }
-    
-    struct SideInfo: View {
-        
-        var originalTitle: String?
-        var tagline: String?
-        var genres: [Genre]?
-        var releaseDate: Date?
-        var lastAirDate: Date?
-        var runtime: String?
-        var birthday: Date?
-        var deathday: Date?
-        var gender: String?
-        
-        var body: some View {
-            VStack(alignment: .leading, spacing: 10) {
-                if let originalTitle = originalTitle {
-                    Text(originalTitle)
-                        .font(.headline)
-                        .lineLimit(2)
-                        .minimumScaleFactor(0.1)
-                }
-                if let tagline = tagline,
-                   tagline != "" {
-                    Text(tagline)
-                        .font(.subheadline)
-                        .fontWeight(.light)
-                        .lineLimit(2)
-                        .minimumScaleFactor(0.1)
-                }
-                if let genres = genres,
-                   !genres.isEmpty {
-                    printGenres(genres)
-                }
-                
-                if let releaseDate = releaseDate {
-                    Label {
-                        VStack(alignment: .leading) {
-                            Text(releaseDate, style: .date)
-                                .font(.subheadline)
-                            if let lastAirDate = lastAirDate {
-                                Text(". . .")
-                                Text(lastAirDate, style: .date)
-                                    .font(.subheadline)
-                                Spacer()
-                            }
-                        }
-                    } icon: {
-                        Image(systemName: "calendar")
-                    }
-                }
-                if let runtime = runtime {
-                    Label {
-                        Text(runtime)
-                            .font(.subheadline)
-                    } icon: {
-                        Image(systemName: "timer")
-                    }
-                }
-                Spacer()
+            if let text = text,
+               !text.isEmpty {
+                Text(text)
             }
         }
         
-        func printGenres(_ genres: [Genre]) -> some View {
-            
-            let output = genres.map { $0.name.capitalized }.joined(separator: " / ")
-            
-            return Text(output)
-                .font(.subheadline)
-                .fontWeight(.thin)
-        }
     }
-    
-    
-    
 }

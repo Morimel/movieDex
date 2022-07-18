@@ -26,6 +26,7 @@ class NetworkManager {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         do {
+            print(url)
             let (data, _) = try await URLSession.shared.data(from: url)
             return try decoder.decode(Item.self, from: data)
         } catch {

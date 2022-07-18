@@ -28,6 +28,8 @@
 		84BC54F028608414003FAE8F /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BC54EF28608414003FAE8F /* MainViewModel.swift */; };
 		84BC54F2286084FF003FAE8F /* FavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BC54F1286084FF003FAE8F /* FavoritesView.swift */; };
 		84BC54F6287DAA27003FAE8F /* DetailedViewExts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BC54F5287DAA27003FAE8F /* DetailedViewExts.swift */; };
+		84BC54F8288585DD003FAE8F /* NavBarCustomButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BC54F7288585DD003FAE8F /* NavBarCustomButtons.swift */; };
+		84BC54FA288586C6003FAE8F /* SideInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BC54F9288586C6003FAE8F /* SideInfoView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,6 +54,8 @@
 		84BC54EF28608414003FAE8F /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
 		84BC54F1286084FF003FAE8F /* FavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
 		84BC54F5287DAA27003FAE8F /* DetailedViewExts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailedViewExts.swift; sourceTree = "<group>"; };
+		84BC54F7288585DD003FAE8F /* NavBarCustomButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavBarCustomButtons.swift; sourceTree = "<group>"; };
+		84BC54F9288586C6003FAE8F /* SideInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideInfoView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,6 +133,8 @@
 			children = (
 				84BC54CA28607B9D003FAE8F /* GridView.swift */,
 				84BC54CC28607BC4003FAE8F /* GridCell.swift */,
+				84BC54F7288585DD003FAE8F /* NavBarCustomButtons.swift */,
+				84BC54F9288586C6003FAE8F /* SideInfoView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -290,6 +296,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				84BC54D728607CCF003FAE8F /* NetworkManager.swift in Sources */,
+				84BC54FA288586C6003FAE8F /* SideInfoView.swift in Sources */,
 				84BC54DC28607DA1003FAE8F /* MovieDatabaseModel.swift in Sources */,
 				84BC54CF28607BE7003FAE8F /* FeedView.swift in Sources */,
 				84BC54E228607E0D003FAE8F /* PersonDataModel.swift in Sources */,
@@ -307,6 +314,7 @@
 				84BC54DE28607DCA003FAE8F /* MovieDataModel.swift in Sources */,
 				84BC54CD28607BC4003FAE8F /* GridCell.swift in Sources */,
 				84BC54F028608414003FAE8F /* MainViewModel.swift in Sources */,
+				84BC54F8288585DD003FAE8F /* NavBarCustomButtons.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
