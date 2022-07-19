@@ -47,6 +47,7 @@ extension DetailedView {
                 image.resizable()
                     .scaledToFill()
                     .frame(width: width)
+                    .clipped()
             } placeholder: {
                 ProgressView().progressViewStyle(.circular)
             }
@@ -78,7 +79,7 @@ extension DetailedView {
         
         var body: some View {
             if let text = text,
-               !text.isEmpty {
+               text != "" {
                 Text(text)
             }
         }

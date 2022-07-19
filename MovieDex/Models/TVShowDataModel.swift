@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 struct TVShow: MDBItem {
     
@@ -19,15 +20,18 @@ struct TVShow: MDBItem {
     let voteAverage: Double
     let voteCount: Int
     
-    let lastAirDate: String?
     let backdropPath: String?
     let status: String?
     let tagline: String?
+    let episodeRunTime: [Int]?
+    
+    let numberOfEpisodes: Int?
+    let numberOfSeasons: Int?
     
     let genres: [Genre]?
     
     private enum CodingKeys: String, CodingKey {
-        case id, originalName, name, overview, posterPath, firstAirDate, voteAverage, voteCount, lastAirDate, backdropPath, status, tagline, genres
+        case id, originalName, name, overview, posterPath, firstAirDate, voteAverage, voteCount, backdropPath, status, tagline, episodeRunTime, numberOfEpisodes, numberOfSeasons, genres
     }
     
     var titleString: String {
@@ -42,15 +46,38 @@ struct TVShow: MDBItem {
         }
     }
     
-    var lastAirDateString: Date? {
-        guard let lastAirDate = lastAirDate else {
+    var runtime: String? {
+        if let episodeRunTime = episodeRunTime,
+           !episodeRunTime.isEmpty {
+            return timeFormatter.string(from: TimeInterval(episodeRunTime.first! * 60))
+        } else {
             return nil
         }
-
-        if lastAirDate.isEmpty {
-            return nil
+    }
+    
+    var numberOfEpisodesString: String? {
+        if let numberOfEpisodes = numberOfEpisodes {
+            let result = "Эпизодов: \(numberOfEpisodes)"
+            return result
         } else {
-            return dateFormatter.date(from: lastAirDate)
+            return nil
+        }
+    }
+    
+    var statusString: String? {
+        if let status = status {
+            switch status {
+            case "Returning Series":
+                return "Продолжается"
+            case "Ended":
+                return "Завершился"
+            case "Planned":
+                return "Планируется"
+            default:
+                return status
+            }
+        } else {
+            return nil
         }
     }
     

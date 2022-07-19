@@ -56,7 +56,10 @@ struct SideInfo<Item: MDBItem>: View {
                 OriginalTitle(title: tvShow.originalName)
                 Tagline(tagline: tvShow.tagline)
                 Genres(genres: tvShow.genres)
-                ReleaseDate(releaseDate: tvShow.dateString, lastAirDate: tvShow.lastAirDateString)
+                ReleaseDate(releaseDate: tvShow.dateString)
+                Status(status: tvShow.statusString)
+                NumberOfEpisodes(number: tvShow.numberOfEpisodesString)
+                Runtime(runtime: tvShow.runtime)
                 Spacer()
             }
                 .frame(minWidth: .zero, maxWidth: .infinity, alignment: .leading)
@@ -114,6 +117,41 @@ extension SideInfo {
         }
     }
     
+    struct NumberOfEpisodes: View {
+        
+        let number: String?
+        
+        var body: some View {
+            if let number = number {
+                Label {
+                Text(number)
+                    .font(.subheadline)
+                    .fontWeight(.light)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.1)
+                } icon: {
+                    Image(systemName: "play.circle")
+                }
+            }
+        }
+    }
+    
+    struct Status: View {
+        
+        let status: String?
+        
+        var body: some View {
+            if let status = status {
+                Label {
+                Text(status)
+                    .font(.subheadline)
+                } icon: {
+                    Image(systemName: "tv").imageScale(.small)
+                }
+            }
+        }
+    }
+    
     struct Runtime: View {
         
         let runtime: String?
@@ -123,6 +161,9 @@ extension SideInfo {
                 Label {
                     Text(runtime)
                         .font(.subheadline)
+                        .fontWeight(.light)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.1)
                 } icon: {
                     Image(systemName: "timer")
                 }
@@ -151,7 +192,6 @@ extension SideInfo {
     struct ReleaseDate: View {
         
         let releaseDate: Date?
-        var lastAirDate: Date? = nil
         
         var body: some View {
             if let releaseDate = releaseDate {
@@ -159,10 +199,6 @@ extension SideInfo {
                     VStack(alignment: .leading) {
                         Text(releaseDate, style: .date)
                             .font(.subheadline)
-                        if let lastAirDate = lastAirDate {
-                            Text(lastAirDate, style: .date)
-                                .font(.subheadline)
-                        }
                     }
                 } icon: {
                     Image(systemName: "calendar")

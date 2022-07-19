@@ -63,7 +63,7 @@ struct DetailedView<Item: MDBItem>: View {
                     VStack(alignment: .leading) {
                         HStack(alignment: .top) {
                             PosterImage(url: viewModel.getImageUrl(size: .poster, path: movie.posterPath),
-                                        width: frame.width * 0.3)
+                                        width: frame.width * 0.35)
                             SideInfo(item: movie)
                             Spacer()
                         }
@@ -101,7 +101,7 @@ struct DetailedView<Item: MDBItem>: View {
                     VStack(alignment: .leading) {
                         HStack(alignment: .top) {
                             PosterImage(url: viewModel.getImageUrl(size: .poster, path: tvShow.posterPath),
-                                        width: frame.width * 0.3)
+                                        width: frame.width * 0.35)
                             SideInfo(item: tvShow)
                             Spacer()
                         }
@@ -131,7 +131,7 @@ struct DetailedView<Item: MDBItem>: View {
                 VStack(alignment: .leading) {
                     HStack(alignment: .top) {
                         PosterImage(url: viewModel.getImageUrl(size: .poster, path: person.profilePath),
-                                    width: frame.width * 0.3)
+                                    width: frame.width * 0.35)
                         SideInfo(item: person)
                             .border(.green)
                         //Spacer()
