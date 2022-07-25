@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-protocol NetworkManagerDelegate {
+protocol NetworkManagerDelegate: AnyObject {
     func didMovieListUpdate(data: [Movie])
     func didTVShowListUpdate(data: [TVShow])
     func didPersonListUpdate(data: [Person])
@@ -17,23 +17,16 @@ protocol NetworkManagerDelegate {
 
 class NetworkManager {
     
-    var delegate: NetworkManagerDelegate?
+    weak var delegate: NetworkManagerDelegate?
     
     private var urlManager = URLManager()
     
     func fetchDetailedData<Item: MDBItem>(for item: Item) async -> Item? {
-        let type: MDBItemType
-        if let _ = item as? Movie {
-            type = .movie
-        } else if let _ = item as? TVShow {
-            type = .tvShow
-        } else {
-            type = .person
-        }
-        guard let url = urlManager.detailedURL(for: type, id: item.id) else { return nil }
+        guard let url = urlManager.detailedURL(for: item.type, id: item.id) else { return nil }
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         do {
+            print(url)
             let (data, _) = try await URLSession.shared.data(from: url)
             return try decoder.decode(Item.self, from: data)
         } catch {

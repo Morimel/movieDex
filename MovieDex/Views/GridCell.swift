@@ -14,7 +14,7 @@ struct GridCell<Item: MDBItem>: View {
     var isLiked: Bool = false
     var cellType: GridCellType
     var imageURL: URL?
-    var likePressed: (Int) -> Void
+    var likePressed: (Item) -> Void
     
     var body: some View {
         NavigationLink(destination: DetailedView(item: item)) {
@@ -57,7 +57,7 @@ struct GridCell<Item: MDBItem>: View {
                                 .foregroundColor(Color(uiColor: ratingColor()).opacity(0.75))
                         }
                     Button {
-                        likePressed(item.id)
+                        likePressed(item)
                     } label: {
                         Image(systemName: isLiked ? "heart.fill" : "heart")
                         
@@ -108,7 +108,7 @@ struct GridCell<Item: MDBItem>: View {
                     Label("\(item.ratingString)", systemImage: "star")
                     Spacer()
                     Button {
-                        likePressed(item.id)
+                        likePressed(item)
                     } label: {
                         Label("Like", systemImage: isLiked ? "heart.fill" : "heart")
                             .labelStyle(.titleAndIcon)
