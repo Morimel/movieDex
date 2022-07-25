@@ -16,21 +16,15 @@ struct SideInfo<Item: MDBItem>: View {
     var body: some View {
         switch item.type {
         case .movie:
-            setupMovieSideInfo(movie: item as? Movie ?? nil)
+            setupMovieSideInfo(movie: item as! Movie)
         case .tvShow:
-            setupTVShowSideInfo(tvShow: item as? TVShow ?? nil)
+            setupTVShowSideInfo(tvShow: item as! TVShow)
         case .person:
-            setupPersonSideInfo(person: item as? Person ?? nil)
+            setupPersonSideInfo(person: item as! Person)
         }
     }
     
-    func setupMovieSideInfo(movie: Movie?) -> some View {
-        guard let movie = movie else {
-            return AnyView(
-                ProgressView()
-                    .progressViewStyle(.circular)
-            )
-        }
+    func setupMovieSideInfo(movie: Movie) -> some View {
         return AnyView(
             VStack(alignment: .leading, spacing: 10) {
                 OriginalTitle(title: movie.originalTitle)
@@ -44,13 +38,7 @@ struct SideInfo<Item: MDBItem>: View {
         )
     }
     
-    func setupTVShowSideInfo(tvShow: TVShow?) -> some View {
-        guard let tvShow = tvShow else {
-            return AnyView(
-                ProgressView()
-                    .progressViewStyle(.circular)
-            )
-        }
+    func setupTVShowSideInfo(tvShow: TVShow) -> some View {
         return AnyView(
             VStack(alignment: .leading, spacing: 10) {
                 OriginalTitle(title: tvShow.originalName)
@@ -66,19 +54,14 @@ struct SideInfo<Item: MDBItem>: View {
         )
     }
     
-    func setupPersonSideInfo(person: Person?) -> some View {
-        guard let person = person else {
-            return AnyView(
-                ProgressView()
-                    .progressViewStyle(.circular)
-            )
-        }
+    func setupPersonSideInfo(person: Person) -> some View {
         return AnyView(
             VStack(alignment: .leading, spacing: 10) {
-                OriginalTitle(title: person.knownAsString)
-                Tagline(tagline: person.knownForDepartment)
-                Tagline(tagline: person.genderString)
-                ReleaseDate(releaseDate: person.dateString)
+                PersonName(input: person.localizedName())
+                Department(input: person.knownForDepartment)
+                Gender(input: person.localizedGender)
+                Birthplace(input: person.placeOfBirth)
+                Dates(input: person.dates)
                 Spacer()
             }
                 .frame(minWidth: .zero, maxWidth: .infinity, alignment: .leading)
@@ -88,9 +71,7 @@ struct SideInfo<Item: MDBItem>: View {
 
 extension SideInfo {
     struct OriginalTitle: View {
-        
         let title: String?
-        
         var body: some View {
             if let title = title {
                 Text(title)
@@ -102,9 +83,7 @@ extension SideInfo {
     }
     
     struct Tagline: View {
-        
         let tagline: String?
-        
         var body: some View {
             if let tagline = tagline,
                tagline != "" {
@@ -118,17 +97,15 @@ extension SideInfo {
     }
     
     struct NumberOfEpisodes: View {
-        
         let number: String?
-        
         var body: some View {
             if let number = number {
                 Label {
-                Text(number)
-                    .font(.subheadline)
-                    .fontWeight(.light)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.1)
+                    Text(number)
+                        .font(.subheadline)
+                        .fontWeight(.light)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.1)
                 } icon: {
                     Image(systemName: "play.circle")
                 }
@@ -137,14 +114,12 @@ extension SideInfo {
     }
     
     struct Status: View {
-        
         let status: String?
-        
         var body: some View {
             if let status = status {
                 Label {
-                Text(status)
-                    .font(.subheadline)
+                    Text(status)
+                        .font(.subheadline)
                 } icon: {
                     Image(systemName: "tv").imageScale(.small)
                 }
@@ -153,9 +128,7 @@ extension SideInfo {
     }
     
     struct Runtime: View {
-        
         let runtime: String?
-        
         var body: some View {
             if let runtime = runtime {
                 Label {
@@ -172,9 +145,7 @@ extension SideInfo {
     }
     
     struct Genres: View {
-        
         let genres: [Genre]?
-        
         var body: some View {
             if let genres = genres,
                !genres.isEmpty {
@@ -190,9 +161,7 @@ extension SideInfo {
     }
     
     struct ReleaseDate: View {
-        
         let releaseDate: Date?
-        
         var body: some View {
             if let releaseDate = releaseDate {
                 Label {
@@ -206,4 +175,114 @@ extension SideInfo {
             }
         }
     }
+    
+    //MARK: Person info
+    
+    struct PersonName: View {
+        let input: String
+        var body: some View {
+            Label{
+            Text(input)
+                .font(.headline)
+                .lineLimit(2)
+                .minimumScaleFactor(0.1)
+            } icon: {
+                Image(systemName: "highlighter")
+            }
+        }
+    }
+    
+    struct Department: View {
+        let input: String?
+        var body: some View {
+            if let input = input,
+               input != "" {
+                Label {
+                    Text(input)
+                        .font(.subheadline)
+                        .fontWeight(.light)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.1)
+                } icon: {
+                    Image(systemName: "bookmark")
+                }
+            }
+        }
+    }
+    
+    struct Gender: View {
+        let input: String?
+        var body: some View {
+            if let input = input,
+               input != "" {
+                Label {
+                    Text(input)
+                        .font(.subheadline)
+                        .fontWeight(.light)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.1)
+                } icon: {
+                    Image(systemName: "person")
+                }
+            }
+        }
+    }
+    
+    struct Birthplace: View {
+        let input: String?
+        var body: some View {
+            if let input = input,
+               input != "" {
+                Label {
+                    Text(input)
+                        .font(.subheadline)
+                        .fontWeight(.light)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.1)
+                } icon: {
+                    Image(systemName: "map")
+                }
+            }
+        }
+    }
+    
+    struct Dates: View {
+        let input: (Date, Date?, Int)?
+        var body: some View {
+            if let input = input {
+                Label {
+                    VStack(alignment: .leading) {
+                        Text(input.0, style: .date)
+                            .font(.subheadline)
+                        + Text(" (\(input.2) лет)")
+                            .font(.subheadline)
+                            .fontWeight(.light)
+                        if let deathdate = input.1 {
+                            Text(deathdate, style: .date)
+                                .font(.subheadline)
+                        }
+                    }
+                } icon: {
+                    Image(systemName: "calendar")
+                }
+            }
+        }
+    }
 }
+
+
+//struct SideInfo_Previews: PreviewProvider {
+//    static var previews: some View {
+//        SideInfo(item: Person(id: 4566,
+//                              name: "Alan Rickman",
+//                              gender: 2,
+//                              profilePath: "/7tADZs4ILE93oJ5pAh6mKQFEq2m.jpg",
+//                              popularity: 9.2,
+//                              birthday: "1946-02-21",
+//                              deathday: "",
+//                              biography: "Алан Рикман\n\nПервая",
+//                              knownForDepartment: "Acting",
+//                              placeOfBirth: "Hammersmith, London, UK",
+//                              alsoKnownAs: ["Алан Рикман"]))
+//    }
+//}

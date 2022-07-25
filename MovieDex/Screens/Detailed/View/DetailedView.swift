@@ -133,8 +133,6 @@ struct DetailedView<Item: MDBItem>: View {
                         PosterImage(url: viewModel.getImageUrl(size: .poster, path: person.profilePath),
                                     width: frame.width * 0.35)
                         SideInfo(item: person)
-                            .border(.green)
-                        //Spacer()
                     }
                     Overview(text: person.biography)
                 }
