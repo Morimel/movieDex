@@ -42,6 +42,15 @@ struct URLManager {
         return urlComponents.url
     }
     
+    func searchURL(itemType: MDBItemType, query: String, page: Int) -> URL? {
+        var urlComponents = baseURLComponents
+        urlComponents.addToPath(imagePath: "/search")
+        urlComponents.setPath(with: [itemType])
+        urlComponents.setQueryItems(with: [.query: query,
+                                           .page: String(page)])
+        return urlComponents.url
+    }
+    
     func imageURL(size: MDBImageSize, path: String) -> URL? {
         var urlComponents = baseImageURLComponents
         urlComponents.setPath(with: [size])
@@ -55,6 +64,7 @@ extension URLComponents {
         case apiKey = "api_key"
         case language
         case page
+        case query
     }
     
     mutating func setQueryItems(with parameters: [URLQueryItemType : String]) {

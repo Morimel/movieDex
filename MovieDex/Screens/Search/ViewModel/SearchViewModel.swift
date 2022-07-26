@@ -1,30 +1,18 @@
 //
-//  FeedViewModel.swift
+//  SearchViewModel.swift
 //  MovieDex
 //
-//  Created by Admin on 20.06.2022.
+//  Created by Admin on 25.07.2022.
 //
 
 import Foundation
 import SwiftUI
 
-class FeedViewModel: ObservableObject {
+class SearchViewModel: ObservableObject {
     
     let userDefaults = UserDefaults.standard
     
     let networkManager = NetworkManager()
-    
-    @Published var searchText = ""
-    
-    @Published var cols: Int = 2
-    
-    @Published var gridView: Bool = true {
-        didSet {
-            changeColsCount()
-        }
-    }
-    
-    @Published var spacing: CGFloat = 10
     
     @Published var movies: [Movie] = []
     @Published var tvshows: [TVShow] = []
@@ -37,11 +25,7 @@ class FeedViewModel: ObservableObject {
     @Published var currentPage: Int = 1
     private var totalPages: Int = 999
     
-    @Published var currentListType: MDBListType = .popular {
-        didSet{
-            reloadList()
-        }
-    }
+    @Published var searchText: String = ""
     
     @Published var currentItemType: MDBItemType = .movie {
         didSet {
@@ -52,14 +36,6 @@ class FeedViewModel: ObservableObject {
     init() {
         reloadList()
         networkManager.delegate = self
-    }
-    
-    func changeColsCount() {
-        if gridView {
-            cols = 2
-        } else {
-            cols = 1
-        }
     }
     
     func loadMoreContent<Data, Item>(currentItem item: Item, in data: Data) async
@@ -73,7 +49,7 @@ class FeedViewModel: ObservableObject {
         }
     }
     
-    private func reloadList() {
+    func reloadList() {
         movies = []
         tvshows = []
         persons = []
@@ -84,9 +60,9 @@ class FeedViewModel: ObservableObject {
     }
     
     func getList() async {
+        guard searchText != "" else { print("no search text"); return }
         await networkManager.fetchList(itemType: currentItemType,
-                                       url: networkManager.listURL(listType: currentListType, itemType: currentItemType, page: currentPage)
-        )
+                                       url: networkManager.searchURL(itemType: currentItemType, query: searchText, page: currentPage))
     }
         
     func getImageUrl(path: String?) -> URL? {
@@ -96,17 +72,9 @@ class FeedViewModel: ObservableObject {
         return networkManager.imageURL(size: .poster, path: path)
     }
     
-    func searchResult<Data>(from data: Data) -> [Data.Element]
-    where Data: RandomAccessCollection,
-          Data.Element: MDBItem {
-              guard !searchText.isEmpty else { return data.filter { _ in true }}
-              return data.filter { item in
-                  item.titleString.lowercased().contains(searchText.lowercased())
-              }
-          }
 }
 
-extension FeedViewModel: NetworkManagerDelegate {
+extension SearchViewModel: NetworkManagerDelegate {
     func didMovieListUpdate(data: [Movie]) {
         movies.append(contentsOf: data)
     }
@@ -122,11 +90,9 @@ extension FeedViewModel: NetworkManagerDelegate {
     func didFailWithError(error: Error) {
         print(error.localizedDescription)
     }
-    
-    
 }
 
-extension FeedViewModel {
+extension SearchViewModel {
     func reloadLikes() {
         likedMovies = Set(userDefaults.array(forKey: "likedMovies") as? [Int] ?? [])
         likedTVShows = Set(userDefaults.array(forKey: "likedTVShows") as? [Int] ?? [])

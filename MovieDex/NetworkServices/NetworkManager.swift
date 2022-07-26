@@ -35,8 +35,8 @@ class NetworkManager {
         }
     }
     
-    func fetchList(of listType: MDBListType, _ itemType: MDBItemType, on page: Int) async {
-        guard let url = urlManager.listURL(listType: listType, itemType: itemType, page: page) else {
+    func fetchList(itemType: MDBItemType, url: URL?) async {
+        guard let url = url else {
             print("Bad url")
             return
         }
@@ -80,6 +80,14 @@ class NetworkManager {
     
     func imageURL(size: MDBImageSize, path: String) -> URL? {
         urlManager.imageURL(size: size, path: path)
+    }
+    
+    func listURL(listType: MDBListType, itemType: MDBItemType, page: Int) -> URL? {
+        urlManager.listURL(listType: listType, itemType: itemType, page: page)
+    }
+    
+    func searchURL(itemType: MDBItemType, query: String, page: Int) -> URL? {
+        urlManager.searchURL(itemType: itemType, query: query, page: page)
     }
     
 }

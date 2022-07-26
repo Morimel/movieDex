@@ -44,3 +44,32 @@ struct NavBarLikeButton: View {
         }
     }
 }
+
+struct NavBarSelectItemTypeButton: View {
+    @Binding var type: MDBItemType
+    var icon: String {
+        switch type {
+        case .movie:
+            return "film"
+        case .tvShow:
+            return "tv"
+        case .person:
+            return "person"
+        }
+    }
+    var body: some View {
+        Menu {
+            VStack {
+                Picker("Item type", selection: $type) {
+                    ForEach(MDBItemType.allCases) { type in
+                        Text(type.rawValue.capitalized)
+                    }
+                }
+            }
+        } label: {
+            Label(type.rawValue.capitalized, systemImage: icon)
+                .foregroundColor(.primary)
+        }
+    }
+    
+}
