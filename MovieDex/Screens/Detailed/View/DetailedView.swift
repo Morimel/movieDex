@@ -33,8 +33,8 @@ struct DetailedView<Item: MDBItem>: View {
                 NavBarBackButton(action: dismiss)
             }
             ToolbarItem(placement: .navigationBarTrailing) {
-                NavBarLikeButton(action: { viewModel.likePressed(for: item) },
-                                 isLiked: viewModel.isItemLiked(item))
+                NavBarLikeButton(isLiked: viewModel.isItemLiked(item),
+                                 action: { viewModel.likePressed(for: item) })
             }
         }
     }
@@ -50,6 +50,7 @@ struct DetailedView<Item: MDBItem>: View {
             return AnyView(
                 ProgressView()
                     .progressViewStyle(.circular)
+                    .frame(minWidth: .zero, maxWidth: .infinity, minHeight: .zero, maxHeight: .infinity)
             )
         }
         return AnyView(
@@ -88,6 +89,7 @@ struct DetailedView<Item: MDBItem>: View {
             return AnyView(
                 ProgressView()
                     .progressViewStyle(.circular)
+                    .frame(minWidth: .zero, maxWidth: .infinity, minHeight: .zero, maxHeight: .infinity)
             )
         }
         return AnyView(
@@ -124,6 +126,7 @@ struct DetailedView<Item: MDBItem>: View {
             return AnyView(
                 ProgressView()
                     .progressViewStyle(.circular)
+                    .frame(minWidth: .zero, maxWidth: .infinity, minHeight: .zero, maxHeight: .infinity)
             )
         }
         return AnyView(

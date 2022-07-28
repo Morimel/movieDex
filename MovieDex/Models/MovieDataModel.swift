@@ -15,7 +15,7 @@ struct Movie: MDBItem {
     let title: String
     let overview: String
     let posterPath: String?
-    let releaseDate: String
+    let releaseDate: String?
     let voteAverage: Double
     let voteCount: Int
     
@@ -30,10 +30,11 @@ struct Movie: MDBItem {
     }
     
     var dateString: Date? {
-        if releaseDate.isEmpty {
-            return nil
-        } else {
+        if let releaseDate = releaseDate,
+            !releaseDate.isEmpty {
             return dateFormatter.date(from: releaseDate)
+        } else {
+            return nil
         }
     }
     

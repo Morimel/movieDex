@@ -13,31 +13,32 @@ struct FeedView: View {
     @StateObject var viewModel = FeedViewModel()
     
     var body: some View {
-        NavigationView {
+        GeometryReader { geometry in
+            let frame = geometry.frame(in: .global)
+            NavigationView {
             switch viewModel.currentItemType {
             case .movie:
-                feed(for: viewModel.movies)
+                feed(for: viewModel.movies, frame: frame)
             case .tvShow:
-                feed(for: viewModel.tvshows)
+                feed(for: viewModel.tvshows, frame: frame)
             case .person:
-                feed(for: viewModel.persons)
+                feed(for: viewModel.persons, frame: frame)
             }
         }
-        .navigationViewStyle(StackNavigationViewStyle())
+        .navigationViewStyle(.stack)
+        }
     }
 }
 
 extension FeedView {
-    func feed<Data: RandomAccessCollection>(for data: Data) -> some View where Data.Element: MDBItem {
+    func feed<Data: RandomAccessCollection>(for data: Data, frame: CGRect) -> some View where Data.Element: MDBItem {
         
         return GridView(data: viewModel.searchResult(from: data),
-                              cols: viewModel.cols,
-                              spacing: viewModel.spacing,
-                              cellViewBuilder: { item in
+                        cellViewBuilder: { item in
             GridCell(item: item,
                      isLiked: viewModel.isItemLiked(item),
-                     cellType: viewModel.gridView ? .short : .detailed,
                      imageURL: viewModel.getImageUrl(path: item.mainImagePath),
+                     frame: frame,
                      likePressed: { item in viewModel.likePressed(for: item) })
                 .onAppear {
                     Task {
@@ -47,34 +48,15 @@ extension FeedView {
         })
             .searchable(text: $viewModel.searchText,
                         placement: .navigationBarDrawer(displayMode: .always),
-                        prompt: "Type movie title")
-            .navigationBarTitle("All movies", displayMode: .inline)
+                        prompt: "Type title here")
+            .navigationTitle("Feed")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        viewModel.gridView.toggle()
-                    } label: {
-                        let imageName = viewModel.gridView ? "rectangle.grid.2x2" : "rectangle.grid.1x2"
-                        Image(systemName: imageName)
-                    }
+                    NavBarSelectItemTypeButton(type: $viewModel.currentItemType)
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Menu {
-                        VStack {
-                            Picker("List type", selection: $viewModel.currentListType) {
-                                ForEach(MDBListType.allCases) { type in
-                                    Text(type.rawValue.capitalized)
-                                }
-                            }
-                            Picker("Item type", selection: $viewModel.currentItemType) {
-                                ForEach(MDBItemType.allCases) { type in
-                                    Text(type.rawValue.capitalized)
-                                }
-                            }
-                        }
-                    } label: {
-                        Image(systemName: "slider.horizontal.3")
-                    }
+                    NavBarSelectListTypeButton(type: $viewModel.currentListType)
                 }
             }
             .onAppear {

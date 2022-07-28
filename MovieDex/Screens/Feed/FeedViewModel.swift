@@ -16,16 +16,6 @@ class FeedViewModel: ObservableObject {
     
     @Published var searchText = ""
     
-    @Published var cols: Int = 2
-    
-    @Published var gridView: Bool = true {
-        didSet {
-            changeColsCount()
-        }
-    }
-    
-    @Published var spacing: CGFloat = 10
-    
     @Published var movies: [Movie] = []
     @Published var tvshows: [TVShow] = []
     @Published var persons: [Person] = []
@@ -52,14 +42,6 @@ class FeedViewModel: ObservableObject {
     init() {
         reloadList()
         networkManager.delegate = self
-    }
-    
-    func changeColsCount() {
-        if gridView {
-            cols = 2
-        } else {
-            cols = 1
-        }
     }
     
     func loadMoreContent<Data, Item>(currentItem item: Item, in data: Data) async

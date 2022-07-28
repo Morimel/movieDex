@@ -38,7 +38,7 @@ class SearchViewModel: ObservableObject {
         networkManager.delegate = self
     }
     
-    func loadMoreContent<Data, Item>(currentItem item: Item, in data: Data) async
+    func loadMoreContent<Data, Item>(currentItem item: Item, from data: Data) async
     where Data: RandomAccessCollection,
           Data.Element: MDBItem,
           Item: MDBItem {
@@ -65,7 +65,7 @@ class SearchViewModel: ObservableObject {
                                        url: networkManager.searchURL(itemType: currentItemType, query: searchText, page: currentPage))
     }
         
-    func getImageUrl(path: String?) -> URL? {
+    func getImageUrl(_ path: String?) -> URL? {
         guard let path = path else {
             return nil
         }
@@ -88,7 +88,7 @@ extension SearchViewModel: NetworkManagerDelegate {
     }
     
     func didFailWithError(error: Error) {
-        print(error.localizedDescription)
+        print(error)
     }
 }
 
@@ -99,7 +99,7 @@ extension SearchViewModel {
         likedPersons = Set(userDefaults.array(forKey: "likedPersons") as? [Int] ?? [])
     }
     
-    func isItemLiked(_ item: MDBItem) -> Bool {
+    func isLiked(_ item: MDBItem) -> Bool {
         let id = item.id
         switch item.type {
         case .movie:
@@ -111,7 +111,7 @@ extension SearchViewModel {
         }
     }
     
-    func likePressed(for item: MDBItem) {
+    func likePressed(_ item: MDBItem) {
         let id = item.id
         switch item.type {
         case .movie:

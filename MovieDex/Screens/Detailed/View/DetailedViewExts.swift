@@ -21,8 +21,6 @@ extension DetailedView {
                 image.resizable()
                     .scaledToFill()
                     .frame(height: height)
-                    .frame(minWidth: .zero, maxWidth: .infinity)
-                    .clipped()
                     .overlay(
                         LinearGradient(stops: [.init(color: Color(uiColor: .systemBackground), location: 0.0),
                                                .init(color: Color(uiColor: .systemBackground).opacity(0.0), location: 0.5),
@@ -33,7 +31,10 @@ extension DetailedView {
                     )
             } placeholder: {
                 ProgressView().progressViewStyle(.circular)
+                    .frame(height: height / 2)
             }
+            .frame(minWidth: .zero, maxWidth: .infinity)
+            .clipped()
         }
     }
     
@@ -46,11 +47,11 @@ extension DetailedView {
             CachedAsyncImage(url: url) { image in
                 image.resizable()
                     .scaledToFill()
-                    .frame(width: width)
-                    .clipped()
             } placeholder: {
                 ProgressView().progressViewStyle(.circular)
             }
+            .frame(width: width)
+            .clipped()
         }
     }
     

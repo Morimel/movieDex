@@ -27,10 +27,8 @@ struct NavBarBackButton: View {
 }
 
 struct NavBarLikeButton: View {
-    
-    let action: () -> Void
     let isLiked: Bool
-    
+    let action: () -> Void
     var body: some View {
         Button{
             action()
@@ -71,5 +69,30 @@ struct NavBarSelectItemTypeButton: View {
                 .foregroundColor(.primary)
         }
     }
-    
+}
+
+struct NavBarSelectListTypeButton: View {
+    @Binding var type: MDBListType
+    var icon: String {
+        switch type {
+        case .popular:
+            return "list.star"
+        case .topRated:
+            return "list.number"
+        }
+    }
+    var body: some View {
+        Menu {
+            VStack {
+                Picker("List type", selection: $type) {
+                    ForEach(MDBListType.allCases) { type in
+                        Text(type.rawValue.capitalized)
+                    }
+                }
+            }
+        } label: {
+            Label(type.rawValue.capitalized, systemImage: icon)
+                .foregroundColor(.primary)
+        }
+    }
 }

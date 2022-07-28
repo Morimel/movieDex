@@ -13,14 +13,12 @@ where Content: View,
       Data.Element: MDBItem {
     
     let data: Data
-    let cols: Int
-    let spacing: CGFloat
+    let cols: Int = 2
+    let spacing: CGFloat = 10
     let cellViewBuilder: (Data.Element) -> Content
     
-    init(data: Data, cols: Int, spacing: CGFloat, cellViewBuilder: @escaping (Data.Element) -> Content) {
+    init(data: Data, cellViewBuilder: @escaping (Data.Element) -> Content) {
         self.data = data
-        self.cols = cols
-        self.spacing = spacing
         self.cellViewBuilder = cellViewBuilder
     }
     
