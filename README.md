@@ -1,12 +1,27 @@
 # MovieDex
 
-![Swift](https://img.shields.io/badge/swift-F54A2A?style=for-the-badge&logo=swift&logoColor=white)
+### Приложение для просмотра списков популярных фильмов, сериалов и знаменитостей.
 
-A simple app for viewing lists of popular movies, tv shows and peoples.
+---
+Язык: Swift  
+UI: SwiftUI  
+Архитектура: MVVM  
+Зависимости: [CacheAsyncImage](https://github.com/lorenzofiamingo/swiftui-cached-async-image)  
+Источник данных: [TheMovieDB](https://www.themoviedb.org/)
 
-###### Provided by [TheMovieDB](https://www.themoviedb.org/)
+---
 
-## Features
+Пет-проект
 
-- Select list and item type (popular/top rated)
-- Like any item, and the app will remember it
+На главном экране реализованы:
+* выбор типа списка (популярные или топовые) фильмов/сериалов/знаменитостей
+* прокручивающаяся сетка карточек, с плавной подзагрузкой новой информации ("бесконечная лента")
+* на карточке отображается постер/фото, а также краткая информация (дата выхода и рейтинг)
+* возможность добавить в избранное любой элемент, и приложение это запомнит
+
+На экране деталей:
+* фоновое изображение, заголовок/имя, постер/фото, и вся доступная информация по фильму/сериалу/знаменисти
+* возможность добавить элемент в избранное
+
+На экране поиска:
+* поиск названию
