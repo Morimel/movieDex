@@ -15,8 +15,8 @@ struct Movie: MDBItem {
     let title: String
     let overview: String
     let posterPath: String?
-    let releaseDate: String
-    let voteAverage: Double
+    let releaseDate: String?
+    let voteAverage: Double?
     let voteCount: Int
     
     let backdropPath: String?
@@ -30,28 +30,17 @@ struct Movie: MDBItem {
     }
     
     var dateString: Date? {
-        if releaseDate.isEmpty {
-            return nil
-        } else {
+        if let releaseDate = releaseDate,
+            !releaseDate.isEmpty {
             return dateFormatter.date(from: releaseDate)
+        } else {
+            return nil
         }
     }
     
     var timeString: String? {
         guard let runtime = runtime, runtime > 0 else { return nil }
         return timeFormatter.string(from: TimeInterval(runtime * 60))
-    }
-    
-    var titleString: String {
-        return title
-    }
-    
-    var descriptionString: String {
-        return overview
-    }
-    
-    var ratingString: Double {
-        return voteAverage
     }
     
     var mainImagePath: String? {

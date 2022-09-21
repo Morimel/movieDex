@@ -28,9 +28,7 @@ struct Person: MDBItem {
         case id, name, gender, profilePath, popularity, birthday, deathday, biography, knownForDepartment, placeOfBirth, alsoKnownAs
     }
     
-    var titleString: String {
-        return name
-    }
+    var voteAverage: Double? = nil
     
     var dateString: Date? {
         if let day = birthday,
@@ -52,14 +50,6 @@ struct Person: MDBItem {
         let age = ageComponents.year!
         let deathdate = endDate == now ? nil : endDate
         return (birthdate, deathdate, age)
-    }
-
-    var descriptionString: String {
-        return "Gender: \(localizedGender)"
-    }
-    
-    var ratingString: Double {
-        return popularity ?? 0
     }
     
     var mainImagePath: String? {

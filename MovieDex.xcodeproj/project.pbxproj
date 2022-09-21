@@ -30,6 +30,7 @@
 		84BC54F6287DAA27003FAE8F /* DetailedViewExts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BC54F5287DAA27003FAE8F /* DetailedViewExts.swift */; };
 		84BC54F8288585DD003FAE8F /* NavBarCustomButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BC54F7288585DD003FAE8F /* NavBarCustomButtons.swift */; };
 		84BC54FA288586C6003FAE8F /* SideInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BC54F9288586C6003FAE8F /* SideInfoView.swift */; };
+		84BC54FE288EC232003FAE8F /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BC54FD288EC232003FAE8F /* SearchViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,6 +57,7 @@
 		84BC54F5287DAA27003FAE8F /* DetailedViewExts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailedViewExts.swift; sourceTree = "<group>"; };
 		84BC54F7288585DD003FAE8F /* NavBarCustomButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavBarCustomButtons.swift; sourceTree = "<group>"; };
 		84BC54F9288586C6003FAE8F /* SideInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideInfoView.swift; sourceTree = "<group>"; };
+		84BC54FD288EC232003FAE8F /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -168,7 +170,8 @@
 		84BC54C728607B4D003FAE8F /* Search */ = {
 			isa = PBXGroup;
 			children = (
-				84BC54E728607F34003FAE8F /* SearchView.swift */,
+				84BC54FB288EC216003FAE8F /* View */,
+				84BC54FC288EC221003FAE8F /* ViewModel */,
 			);
 			path = Search;
 			sourceTree = "<group>";
@@ -215,6 +218,22 @@
 			isa = PBXGroup;
 			children = (
 				84BC54D428607CA0003FAE8F /* DetailedViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		84BC54FB288EC216003FAE8F /* View */ = {
+			isa = PBXGroup;
+			children = (
+				84BC54E728607F34003FAE8F /* SearchView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		84BC54FC288EC221003FAE8F /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				84BC54FD288EC232003FAE8F /* SearchViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -310,6 +329,7 @@
 				84BC54D328607C88003FAE8F /* DetailedView.swift in Sources */,
 				84BC54E828607F34003FAE8F /* SearchView.swift in Sources */,
 				84BC54B1286073F1003FAE8F /* MovieDexApp.swift in Sources */,
+				84BC54FE288EC232003FAE8F /* SearchViewModel.swift in Sources */,
 				84BC54F2286084FF003FAE8F /* FavoritesView.swift in Sources */,
 				84BC54DE28607DCA003FAE8F /* MovieDataModel.swift in Sources */,
 				84BC54CD28607BC4003FAE8F /* GridCell.swift in Sources */,

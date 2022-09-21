@@ -13,73 +13,60 @@ struct FeedView: View {
     @StateObject var viewModel = FeedViewModel()
     
     var body: some View {
-        NavigationView {
-            switch viewModel.currentItemType {
-            case .movie:
-                feed(for: viewModel.movies)
-            case .tvShow:
-                feed(for: viewModel.tvshows)
-            case .person:
-                feed(for: viewModel.persons)
+        GeometryReader { geometry in
+            let cellHeight = geometry.frame(in: .global).width * 0.8
+            NavigationView {
+                switch viewModel.currentItemType {
+                case .movie:
+                    feed(data: viewModel.movies, height: cellHeight)
+                case .tvShow:
+                    feed(data: viewModel.tvshows, height: cellHeight)
+                case .person:
+                    feed(data: viewModel.persons, height: cellHeight)
+                }
             }
+            .navigationViewStyle(.stack)
         }
-        .navigationViewStyle(StackNavigationViewStyle())
     }
-}
-
-extension FeedView {
-    func feed<Data: RandomAccessCollection>(for data: Data) -> some View where Data.Element: MDBItem {
-        
-        return GridView(data: viewModel.searchResult(from: data),
-                              cols: viewModel.cols,
-                              spacing: viewModel.spacing,
-                              cellViewBuilder: { item in
-            GridCell(item: item,
-                     isLiked: viewModel.isItemLiked(item),
-                     cellType: viewModel.gridView ? .short : .detailed,
-                     imageURL: viewModel.getImageUrl(path: item.mainImagePath),
-                     likePressed: { item in viewModel.likePressed(for: item) })
-                .onAppear {
-                    Task {
-                        await viewModel.loadMoreContent(currentItem: item, in: data)
-                    }
-                }
-        })
-            .searchable(text: $viewModel.searchText,
-                        placement: .navigationBarDrawer(displayMode: .always),
-                        prompt: "Type movie title")
-            .navigationBarTitle("All movies", displayMode: .inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        viewModel.gridView.toggle()
-                    } label: {
-                        let imageName = viewModel.gridView ? "rectangle.grid.2x2" : "rectangle.grid.1x2"
-                        Image(systemName: imageName)
-                    }
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Menu {
-                        VStack {
-                            Picker("List type", selection: $viewModel.currentListType) {
-                                ForEach(MDBListType.allCases) { type in
-                                    Text(type.rawValue.capitalized)
-                                }
-                            }
-                            Picker("Item type", selection: $viewModel.currentItemType) {
-                                ForEach(MDBItemType.allCases) { type in
-                                    Text(type.rawValue.capitalized)
-                                }
+    
+    @ViewBuilder func feed<Data>(data: Data, height: CGFloat) -> some View
+    where Data: RandomAccessCollection, Data.Element: MDBItem {
+        ScrollView {
+            if data.isEmpty {
+                ProgressView()
+                    .progressViewStyle(.circular)
+                    .frame(height: height)
+                    .frame(maxWidth: .infinity)
+            } else {
+                GridView(data: data) { item in
+                    GridCell(item: item,
+                             isLiked: viewModel.isItemLiked(item),
+                             imageURL: viewModel.getImageUrl(path: item.mainImagePath),
+                             height: height,
+                             likePressed: { item in viewModel.likePressed(for: item) })
+                        .onAppear {
+                            Task {
+                                await viewModel.loadMoreContent(currentItem: item, in: data)
                             }
                         }
-                    } label: {
-                        Image(systemName: "slider.horizontal.3")
-                    }
                 }
             }
-            .onAppear {
-                viewModel.reloadLikes()
+        }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                NavBarSelectItemTypeButton(type: $viewModel.currentItemType, titleMode: .right)
             }
+            ToolbarItem(placement: .principal) {
+                Text("Feed")
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                NavBarSelectListTypeButton(type: $viewModel.currentListType, titleMode: .left)
+            }
+        }
+        .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            viewModel.reloadLikes()
+        }
     }
 }
 

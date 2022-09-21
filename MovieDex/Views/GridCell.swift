@@ -12,146 +12,252 @@ struct GridCell<Item: MDBItem>: View {
     
     var item: Item
     var isLiked: Bool = false
-    var cellType: GridCellType
     var imageURL: URL?
+    var height: CGFloat
     var likePressed: (Item) -> Void
+    
+    var posterHeight: CGFloat {
+        height * 0.8
+    }
+    var infoHeight: CGFloat {
+        height * 0.25
+    }
+    var buttonHeight: CGFloat {
+        height * 0.1
+    }
     
     var body: some View {
         NavigationLink(destination: DetailedView(item: item)) {
-            switch cellType {
-            case .short:
-                setupShortCell()
-            case .detailed:
-                setupDetailedCell()
+            switch item.type {
+            case .movie:
+                setupMovieCell()
+            case .tvShow:
+                setupTVShowCell()
+            case .person:
+                setupPersonCell()
             }
         }
     }
     
-    private func setupShortCell() -> some View {
-        return VStack(spacing: .zero) {
-                CachedAsyncImage(url: imageURL) { image in
-                    image
-                        .resizable()
-                        .scaledToFill()
-                } placeholder: {
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                }
-            VStack(spacing: 10) {
-                Text("\(item.titleString)")
-                    .font(.title)
-                    .fontWeight(.bold)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.1)
-                if let date = item.dateString {
-                    Text(date, style: .date)
-                        .font(.footnote)
-                        .foregroundColor(Color(uiColor: .systemGray))
-                }
-                HStack(spacing: 10) {
-                    Text(String.init(format: "%.0f", item.ratingString * 10) + "%")
-                        .padding(10)
-                        .frame(minWidth: .zero, maxWidth: .infinity)
-                        .background(alignment: .center) {
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .foregroundColor(Color(uiColor: ratingColor()).opacity(0.75))
-                        }
-                    Button {
-                        likePressed(item)
-                    } label: {
-                        Image(systemName: isLiked ? "heart.fill" : "heart")
-                        
-                            .padding(10)
-                            .frame(minWidth: .zero, maxWidth: .infinity)
-                            .background(alignment: .center) {
-                                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                    .foregroundColor(Color(uiColor: .systemPink).opacity(isLiked ? 1.0 : 0.3))
-                            }
-                    }
-                }
-            }
-            .frame(minHeight: .zero, maxHeight: .infinity)
-            .padding(10)
-        }
-        .foregroundColor(.primary)
-        .frame(minHeight: .zero, maxHeight: .infinity)
-        .cornerRadius(10)
-        .background(RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .foregroundColor(Color(uiColor: .secondarySystemBackground)))
-        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.secondary, lineWidth: 0.5))
-    }
-    
-    private func setupDetailedCell() -> some View {
-        return HStack(spacing: .zero) {
-            CachedAsyncImage(url: imageURL) { image in
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-            } placeholder: {
-                ProgressView()
-                    .progressViewStyle(.circular)
-            }
-            VStack(spacing: 5) {
-                Text("\(item.titleString)")
-                    .font(.title)
-                    .fontWeight(.bold)
-                    .lineLimit(3)
-                    .minimumScaleFactor(0.1)
-                if let date = item.dateString {
-                    Spacer()
-                    Text(date, style: .date)
-                        .font(.footnote)
-                }
-                Spacer()
+    @ViewBuilder private func setupMovieCell() -> some View {
+        let movie = item as! Movie
+        VStack(spacing: buttonHeight / 2) {
+            ZStack(alignment: .bottom) {
+                PosterImage(url: imageURL, height: posterHeight)
                 HStack {
-                    Spacer()
-                    Label("\(item.ratingString)", systemImage: "star")
-                    Spacer()
-                    Button {
-                        likePressed(item)
-                    } label: {
-                        Label("Like", systemImage: isLiked ? "heart.fill" : "heart")
-                            .labelStyle(.titleAndIcon)
+                    if let rating = item.voteAverage {
+                        RatingButton(value: rating)
                     }
                     Spacer()
+                    LikeButton(item: item,
+                               isLiked: isLiked,
+                               action: { item in likePressed(item) })
                 }
-                Spacer()
-                Text("\(item.descriptionString)")
-                    .lineLimit(6)
-                    .minimumScaleFactor(0.8)
-                    .multilineTextAlignment(.leading)
+                .frame(height: buttonHeight)
+                .offset(y: buttonHeight / 2)
+                .padding(.horizontal, 15)
             }
-            .foregroundColor(.primary)
-            .padding()
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            VStack {
+                Title(title: movie.title)
+                ReleaseDate(date: movie.dateString)
+            }
+            .padding(10)
+            .frame(height: infoHeight)
         }
-        .frame(maxWidth: .infinity)
-        .cornerRadius(10)
-        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.secondary, lineWidth: 0.3))
+        .modifier(RoundedCorners(value: 20))
     }
     
-
+    @ViewBuilder private func setupTVShowCell() -> some View {
+        let tvShow = item as! TVShow
+        VStack(spacing: buttonHeight / 2) {
+            ZStack(alignment: .bottom) {
+                PosterImage(url: imageURL, height: posterHeight)
+                HStack {
+                    if let rating = item.voteAverage {
+                        RatingButton(value: rating)
+                    }
+                    Spacer()
+                    LikeButton(item: item,
+                               isLiked: isLiked,
+                               action: { item in likePressed(item) })
+                }
+                .frame(height: buttonHeight)
+                .offset(y: buttonHeight / 2)
+                .padding(.horizontal, 15)
+            }
+            VStack {
+                Title(title: tvShow.name)
+                ReleaseDate(date: tvShow.dateString)
+            }
+            .padding(10)
+            .frame(height: infoHeight)
+        }
+        .modifier(RoundedCorners(value: 10))
+    }
+    
+    @ViewBuilder private func setupPersonCell() -> some View {
+        let person = item as! Person
+        VStack(spacing: buttonHeight / 2) {
+            ZStack(alignment: .bottom) {
+                PosterImage(url: imageURL, height: posterHeight)
+                HStack {
+                    if let rating = item.voteAverage {
+                        RatingButton(value: rating)
+                    }
+                    Spacer()
+                    LikeButton(item: item,
+                               isLiked: isLiked,
+                               action: { item in likePressed(item) })
+                }
+                .frame(height: buttonHeight)
+                .offset(y: buttonHeight / 2)
+                .padding(.horizontal, 15)
+            }
+            VStack {
+                Title(title: person.name)
+                HStack {
+                    Information(value: person.knownForDepartment)
+                    Information(value: person.localizedGender)
+                }
+            }
+            .padding(10)
+            .frame(height: infoHeight)
+        }
+        .modifier(RoundedCorners(value: 10))
+    }
 }
 
 extension GridCell {
     
-    enum GridCellType {
-        case detailed
-        case short
+    struct Title: View {
+        
+        let title: String
+        
+        var body: some View {
+            Text(title)
+                .font(.title)
+                .fontWeight(.bold)
+                .foregroundColor(.primary)
+                .lineLimit(3)
+                .minimumScaleFactor(0.2)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
     }
     
-    private func ratingColor() -> UIColor {
-        switch item.ratingString {
-        case 0..<2.5 :
-            return .systemRed
-        case 2.5..<5.0:
-            return .systemOrange
-        case 5.0..<7.0:
-            return .systemYellow
-        case 7.0...:
-            return .systemGreen
-        default:
-            return .systemGreen
+    struct ReleaseDate: View {
+        
+        let date: Date?
+        
+        var body: some View {
+            if let date = date {
+                Text(date, style: .date)
+                    .font(.footnote)
+                    .foregroundColor(Color(uiColor: .systemGray))
+            }
+        }
+    }
+    
+    struct Information: View {
+        
+        let value: String?
+        
+        var body: some View {
+            if let value = value {
+                Text(value)
+                    .font(.footnote)
+                    .foregroundColor(Color(uiColor: .systemGray))
+            }
+        }
+    }
+    
+    struct RatingButton: View {
+        
+        let value: Double
+        
+        var body: some View {
+            ZStack {
+                Circle()
+                    .fill(Color(uiColor: ratingColor()))
+                    .scaledToFit()
+                    .shadow(color: .secondary.opacity(0.3), radius: 5)
+                Text(String.init(format: "%.1f", value))
+                    .font(.caption)
+                    .fontWeight(.heavy)
+                    .foregroundColor(.white)
+                    .shadow(color: .black, radius: 1)
+            }
+        }
+        
+        private func ratingColor() -> UIColor {
+            switch value {
+            case .zero:
+                return .systemGray
+            case 0..<2.5 :
+                return .systemRed
+            case 2.5..<5.0:
+                return .systemOrange
+            case 5.0..<7.0:
+                return .systemYellow
+            case 7.0...:
+                return .systemGreen
+            default:
+                return .systemGray
+            }
+        }
+    }
+    
+    struct LikeButton: View {
+        
+        let item: Item
+        let isLiked: Bool
+        let action: (Item) -> Void
+        
+        var body: some View {
+            Button {
+                action(item)
+            } label: {
+                ZStack {
+                    Circle()
+                        .fill(.white)
+                        .scaledToFit()
+                        .shadow(color: .secondary.opacity(0.3), radius: 5)
+                    Image(systemName: isLiked ? "heart.fill" : "heart")
+                        .imageScale(.medium)
+                        .foregroundColor(Color(uiColor: .systemPink))
+                }
+            }
+        }
+    }
+    
+    struct PosterImage: View {
+        
+        let url: URL?
+        let height: CGFloat
+        
+        var body: some View {
+            CachedAsyncImage(url: url) { image in
+                image
+                    .resizable()
+                    .scaledToFill()
+            } placeholder: {
+                ProgressView()
+                    .progressViewStyle(.circular)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            .frame(height: height, alignment: .bottom)
+            .clipped()
+        }
+    }
+    
+    struct RoundedCorners: ViewModifier {
+        
+        let value: CGFloat
+        
+        func body(content: Content) -> some View {
+            return content
+                .background(Color(uiColor: .secondarySystemBackground))
+                .cornerRadius(value)
+                .overlay(RoundedRectangle(cornerRadius: value).stroke(Color.secondary, lineWidth: 0.5))
         }
     }
 }
