@@ -39,7 +39,12 @@ extension SearchView {
     @ViewBuilder func setupSearchResult<Data>(data: Data, height: CGFloat) -> some View
     where Data: RandomAccessCollection, Data.Element: MDBItem {
         ScrollView {
-            if data.isEmpty {
+            if viewModel.searchText.isEmpty {
+                Text("What are we going to find today?")
+                    .font(.headline)
+                    .foregroundColor(.secondary)
+                    .padding(20)
+            } else if data.isEmpty {
                 ProgressView()
                     .progressViewStyle(.circular)
                     .frame(height: height)
