@@ -17,7 +17,7 @@ struct TVShow: MDBItem {
     let overview: String
     let posterPath: String?
     let firstAirDate: String
-    let voteAverage: Double
+    let voteAverage: Double?
     let voteCount: Int
     
     let backdropPath: String?
@@ -32,10 +32,6 @@ struct TVShow: MDBItem {
     
     private enum CodingKeys: String, CodingKey {
         case id, originalName, name, overview, posterPath, firstAirDate, voteAverage, voteCount, backdropPath, status, tagline, episodeRunTime, numberOfEpisodes, numberOfSeasons, genres
-    }
-    
-    var titleString: String {
-        return name
     }
     
     var dateString: Date? {
@@ -79,14 +75,6 @@ struct TVShow: MDBItem {
         } else {
             return nil
         }
-    }
-    
-    var descriptionString: String {
-        return overview
-    }
-    
-    var ratingString: Double {
-        return voteAverage
     }
     
     var mainImagePath: String? {

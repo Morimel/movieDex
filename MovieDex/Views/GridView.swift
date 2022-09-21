@@ -13,8 +13,6 @@ where Content: View,
       Data.Element: MDBItem {
     
     let data: Data
-    let cols: Int = 2
-    let spacing: CGFloat = 10
     let cellViewBuilder: (Data.Element) -> Content
     
     init(data: Data, cellViewBuilder: @escaping (Data.Element) -> Content) {
@@ -23,24 +21,15 @@ where Content: View,
     }
     
     var body: some View {
-        ScrollView {
-            self.setupView().padding(spacing)
-        }
-        if data.isEmpty {
-            Text("No movies")
-        }
         
-    }
-    
-    private func setupView() -> some View {
+        let columns: [GridItem] = Array(repeating: GridItem(.flexible()), count: 2)
         
-        let columns: [GridItem] = Array(repeating: GridItem(.flexible(), spacing: spacing, alignment: .top), count: cols)
-        
-        return LazyVGrid(columns: columns, alignment: .center) {
+        LazyVGrid(columns: columns) {
             ForEach(data, id: \.id) { item in
                 self.cellViewBuilder(item)
             }
         }
+        .padding(.horizontal, 10)
     }
 }
 

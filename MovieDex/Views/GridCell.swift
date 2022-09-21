@@ -13,20 +13,17 @@ struct GridCell<Item: MDBItem>: View {
     var item: Item
     var isLiked: Bool = false
     var imageURL: URL?
-    var frame: CGRect
+    var height: CGFloat
     var likePressed: (Item) -> Void
     
-    var cellHeight: CGFloat {
-        frame.height / 2
-    }
     var posterHeight: CGFloat {
-        cellHeight * 0.7
+        height * 0.8
     }
     var infoHeight: CGFloat {
-        cellHeight * 0.3
+        height * 0.25
     }
-    var buttonsHeight: CGFloat {
-        infoHeight * 0.3
+    var buttonHeight: CGFloat {
+        height * 0.1
     }
     
     var body: some View {
@@ -42,68 +39,89 @@ struct GridCell<Item: MDBItem>: View {
         }
     }
     
-    private func setupMovieCell() -> some View {
+    @ViewBuilder private func setupMovieCell() -> some View {
         let movie = item as! Movie
-        return VStack(spacing: 0) {
-            PosterImage(url: imageURL, height: posterHeight)
-            VStack(spacing: 5) {
+        VStack(spacing: buttonHeight / 2) {
+            ZStack(alignment: .bottom) {
+                PosterImage(url: imageURL, height: posterHeight)
+                HStack {
+                    if let rating = item.voteAverage {
+                        RatingButton(value: rating)
+                    }
+                    Spacer()
+                    LikeButton(item: item,
+                               isLiked: isLiked,
+                               action: { item in likePressed(item) })
+                }
+                .frame(height: buttonHeight)
+                .offset(y: buttonHeight / 2)
+                .padding(.horizontal, 15)
+            }
+            VStack {
                 Title(title: movie.title)
                 ReleaseDate(date: movie.dateString)
-                HStack(spacing: 10) {
-                    RatingButton(value: movie.voteAverage, height: buttonsHeight)
-                    LikeButton(item: item,
-                               isLiked: isLiked,
-                               height: buttonsHeight,
-                               action: { item in likePressed(item) })
-                }
             }
             .padding(10)
             .frame(height: infoHeight)
-            .frame(minWidth: .zero, maxWidth: .infinity)
         }
-        .modifier(RoundedCorners(value: 10))
+        .modifier(RoundedCorners(value: 20))
     }
     
-    private func setupTVShowCell() -> some View {
+    @ViewBuilder private func setupTVShowCell() -> some View {
         let tvShow = item as! TVShow
-        return VStack(spacing: 0) {
-            PosterImage(url: imageURL, height: posterHeight)
-            VStack(spacing: 5) {
+        VStack(spacing: buttonHeight / 2) {
+            ZStack(alignment: .bottom) {
+                PosterImage(url: imageURL, height: posterHeight)
+                HStack {
+                    if let rating = item.voteAverage {
+                        RatingButton(value: rating)
+                    }
+                    Spacer()
+                    LikeButton(item: item,
+                               isLiked: isLiked,
+                               action: { item in likePressed(item) })
+                }
+                .frame(height: buttonHeight)
+                .offset(y: buttonHeight / 2)
+                .padding(.horizontal, 15)
+            }
+            VStack {
                 Title(title: tvShow.name)
                 ReleaseDate(date: tvShow.dateString)
-                HStack(spacing: 10) {
-                    RatingButton(value: tvShow.voteAverage, height: buttonsHeight)
-                    LikeButton(item: item,
-                               isLiked: isLiked,
-                               height: buttonsHeight,
-                               action: { item in likePressed(item) })
-                }
             }
             .padding(10)
             .frame(height: infoHeight)
-            .frame(minWidth: .zero, maxWidth: .infinity)
         }
         .modifier(RoundedCorners(value: 10))
     }
     
-    private func setupPersonCell() -> some View {
+    @ViewBuilder private func setupPersonCell() -> some View {
         let person = item as! Person
-        return VStack(spacing: 0) {
-            PosterImage(url: imageURL, height: posterHeight)
-            VStack(spacing: 5) {
+        VStack(spacing: buttonHeight / 2) {
+            ZStack(alignment: .bottom) {
+                PosterImage(url: imageURL, height: posterHeight)
+                HStack {
+                    if let rating = item.voteAverage {
+                        RatingButton(value: rating)
+                    }
+                    Spacer()
+                    LikeButton(item: item,
+                               isLiked: isLiked,
+                               action: { item in likePressed(item) })
+                }
+                .frame(height: buttonHeight)
+                .offset(y: buttonHeight / 2)
+                .padding(.horizontal, 15)
+            }
+            VStack {
                 Title(title: person.name)
                 HStack {
                     Information(value: person.knownForDepartment)
                     Information(value: person.localizedGender)
                 }
-                LikeButton(item: item,
-                           isLiked: isLiked,
-                           height: buttonsHeight,
-                           action: { item in likePressed(item) })
             }
             .padding(10)
             .frame(height: infoHeight)
-            .frame(minWidth: .zero, maxWidth: .infinity)
         }
         .modifier(RoundedCorners(value: 10))
     }
@@ -112,7 +130,9 @@ struct GridCell<Item: MDBItem>: View {
 extension GridCell {
     
     struct Title: View {
+        
         let title: String
+        
         var body: some View {
             Text(title)
                 .font(.title)
@@ -120,13 +140,14 @@ extension GridCell {
                 .foregroundColor(.primary)
                 .lineLimit(3)
                 .minimumScaleFactor(0.2)
-                .frame(minHeight: .zero, maxHeight: .infinity)
-                .foregroundColor(.primary)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
     
     struct ReleaseDate: View {
+        
         let date: Date?
+        
         var body: some View {
             if let date = date {
                 Text(date, style: .date)
@@ -137,7 +158,9 @@ extension GridCell {
     }
     
     struct Information: View {
+        
         let value: String?
+        
         var body: some View {
             if let value = value {
                 Text(value)
@@ -148,24 +171,27 @@ extension GridCell {
     }
     
     struct RatingButton: View {
+        
         let value: Double
-        let height: CGFloat
+        
         var body: some View {
-            Text(String.init(format: "%.0f", value * 10) + "%")
-                .font(.title)
-                .minimumScaleFactor(0.1)
-                .padding(5)
-                .frame(minWidth: .zero, maxWidth: .infinity)
-                .frame(height: height)
-                .foregroundColor(.primary)
-                .background(alignment: .center) {
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .foregroundColor(Color(uiColor: ratingColor()).opacity(0.75))
-                }
+            ZStack {
+                Circle()
+                    .fill(Color(uiColor: ratingColor()))
+                    .scaledToFit()
+                    .shadow(color: .secondary.opacity(0.3), radius: 5)
+                Text(String.init(format: "%.1f", value))
+                    .font(.caption)
+                    .fontWeight(.heavy)
+                    .foregroundColor(.white)
+                    .shadow(color: .black, radius: 1)
+            }
         }
         
-        func ratingColor() -> UIColor {
+        private func ratingColor() -> UIColor {
             switch value {
+            case .zero:
+                return .systemGray
             case 0..<2.5 :
                 return .systemRed
             case 2.5..<5.0:
@@ -181,55 +207,56 @@ extension GridCell {
     }
     
     struct LikeButton: View {
+        
         let item: Item
         let isLiked: Bool
-        let height: CGFloat
         let action: (Item) -> Void
+        
         var body: some View {
             Button {
                 action(item)
             } label: {
-                Image(systemName: isLiked ? "heart.fill" : "heart")
-                    .resizable()
-                    .scaledToFit()
-                    .minimumScaleFactor(0.5)
-                    .padding(5)
-                    .frame(minWidth: .zero, maxWidth: .infinity)
-                    .frame(height: height)
-                    .foregroundColor(.primary)
-                    .background(alignment: .center) {
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .foregroundColor(Color(uiColor: .systemPink).opacity(isLiked ? 1.0 : 0.3))
-                    }
+                ZStack {
+                    Circle()
+                        .fill(.white)
+                        .scaledToFit()
+                        .shadow(color: .secondary.opacity(0.3), radius: 5)
+                    Image(systemName: isLiked ? "heart.fill" : "heart")
+                        .imageScale(.medium)
+                        .foregroundColor(Color(uiColor: .systemPink))
+                }
             }
         }
     }
     
     struct PosterImage: View {
+        
         let url: URL?
         let height: CGFloat
+        
         var body: some View {
             CachedAsyncImage(url: url) { image in
                 image
                     .resizable()
                     .scaledToFill()
-                    .frame(alignment: .bottom)
             } placeholder: {
                 ProgressView()
                     .progressViewStyle(.circular)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .frame(height: height)
+            .frame(height: height, alignment: .bottom)
             .clipped()
         }
     }
     
     struct RoundedCorners: ViewModifier {
+        
         let value: CGFloat
+        
         func body(content: Content) -> some View {
             return content
-                .cornerRadius(10)
-                .background(RoundedRectangle(cornerRadius: value, style: .continuous)
-                                .foregroundColor(Color(uiColor: .secondarySystemBackground)))
+                .background(Color(uiColor: .secondarySystemBackground))
+                .cornerRadius(value)
                 .overlay(RoundedRectangle(cornerRadius: value).stroke(Color.secondary, lineWidth: 0.5))
         }
     }

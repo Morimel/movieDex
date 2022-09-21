@@ -13,15 +13,15 @@ struct SearchView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            let frame = geometry.frame(in: .global)
+            let cellHeight = geometry.frame(in: .global).width * 0.8
             NavigationView {
                 switch viewModel.currentItemType {
                 case .movie:
-                    setupSearchResult(data: viewModel.movies, frame: frame)
+                    setupSearchResult(data: viewModel.movies, height: cellHeight)
                 case .tvShow:
-                    setupSearchResult(data: viewModel.tvshows, frame: frame)
+                    setupSearchResult(data: viewModel.tvshows, height: cellHeight)
                 case .person:
-                    setupSearchResult(data: viewModel.persons, frame: frame)
+                    setupSearchResult(data: viewModel.persons, height: cellHeight)
                 }
             }
             .searchable(text: $viewModel.searchText,
@@ -36,33 +36,41 @@ struct SearchView: View {
 }
 
 extension SearchView {
-    func setupSearchResult<Data>(data: Data, frame: CGRect) -> some View
+    @ViewBuilder func setupSearchResult<Data>(data: Data, height: CGFloat) -> some View
     where Data: RandomAccessCollection, Data.Element: MDBItem {
-        
-        return GridView(data: data,
-                        cellViewBuilder: { item in
-            GridCell(item: item,
-                     isLiked: viewModel.isLiked(item),
-                     imageURL: viewModel.getImageUrl(item.mainImagePath),
-                     frame: frame,
-                     likePressed: { item in viewModel.likePressed(item) })
-                .onAppear {
-                    Task {
-                        await viewModel.loadMoreContent(currentItem: item, from: data)
-                    }
-                }
-        })
-            .onAppear {
-                viewModel.reloadLikes()
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    NavBarSelectItemTypeButton(type: $viewModel.currentItemType)
+        ScrollView {
+            if data.isEmpty {
+                ProgressView()
+                    .progressViewStyle(.circular)
+                    .frame(height: height)
+                    .frame(maxWidth: .infinity)
+            } else {
+                GridView(data: data) { item in
+                    GridCell(item: item,
+                             isLiked: viewModel.isLiked(item),
+                             imageURL: viewModel.getImageUrl(item.mainImagePath),
+                             height: height,
+                             likePressed: { item in viewModel.likePressed(item) })
+                        .onAppear {
+                            Task {
+                                await viewModel.loadMoreContent(currentItem: item, from: data)
+                            }
+                        }
                 }
             }
-            .labelStyle(.titleAndIcon)
-            .navigationTitle("Search")
-            .navigationBarTitleDisplayMode(.inline)
+        }
+        .onAppear {
+            viewModel.reloadLikes()
+        }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                NavBarSelectItemTypeButton(type: $viewModel.currentItemType, titleMode: .right)
+            }
+            ToolbarItem(placement: .principal) {
+                Text("Search")
+            }
+        }
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

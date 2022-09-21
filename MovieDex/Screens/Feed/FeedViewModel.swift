@@ -10,11 +10,9 @@ import SwiftUI
 
 class FeedViewModel: ObservableObject {
     
-    let userDefaults = UserDefaults.standard
+    private let userDefaults = UserDefaults.standard
     
-    let networkManager = NetworkManager()
-    
-    @Published var searchText = ""
+    private let networkManager = NetworkManager()
     
     @Published var movies: [Movie] = []
     @Published var tvshows: [TVShow] = []
@@ -67,7 +65,9 @@ class FeedViewModel: ObservableObject {
     
     func getList() async {
         await networkManager.fetchList(itemType: currentItemType,
-                                       url: networkManager.listURL(listType: currentListType, itemType: currentItemType, page: currentPage)
+                                       url: networkManager.listURL(listType: currentListType,
+                                                                   itemType: currentItemType,
+                                                                   page: currentPage)
         )
     }
         
@@ -77,15 +77,6 @@ class FeedViewModel: ObservableObject {
         }
         return networkManager.imageURL(size: .poster, path: path)
     }
-    
-    func searchResult<Data>(from data: Data) -> [Data.Element]
-    where Data: RandomAccessCollection,
-          Data.Element: MDBItem {
-              guard !searchText.isEmpty else { return data.filter { _ in true }}
-              return data.filter { item in
-                  item.titleString.lowercased().contains(searchText.lowercased())
-              }
-          }
 }
 
 extension FeedViewModel: NetworkManagerDelegate {

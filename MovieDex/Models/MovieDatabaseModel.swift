@@ -12,10 +12,8 @@ import Foundation
 protocol MDBItem: Decodable {
     var id: Int { get }
     var type: MDBItemType { get }
-    var titleString: String { get }
     var dateString: Date? { get }
-    var descriptionString: String { get }
-    var ratingString: Double { get }
+    var voteAverage: Double? { get }
     var mainImagePath: String? { get }
 }
 

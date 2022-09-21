@@ -14,54 +14,59 @@ struct FeedView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            let frame = geometry.frame(in: .global)
+            let cellHeight = geometry.frame(in: .global).width * 0.8
             NavigationView {
-            switch viewModel.currentItemType {
-            case .movie:
-                feed(for: viewModel.movies, frame: frame)
-            case .tvShow:
-                feed(for: viewModel.tvshows, frame: frame)
-            case .person:
-                feed(for: viewModel.persons, frame: frame)
+                switch viewModel.currentItemType {
+                case .movie:
+                    feed(data: viewModel.movies, height: cellHeight)
+                case .tvShow:
+                    feed(data: viewModel.tvshows, height: cellHeight)
+                case .person:
+                    feed(data: viewModel.persons, height: cellHeight)
+                }
             }
-        }
-        .navigationViewStyle(.stack)
+            .navigationViewStyle(.stack)
         }
     }
-}
-
-extension FeedView {
-    func feed<Data: RandomAccessCollection>(for data: Data, frame: CGRect) -> some View where Data.Element: MDBItem {
-        
-        return GridView(data: viewModel.searchResult(from: data),
-                        cellViewBuilder: { item in
-            GridCell(item: item,
-                     isLiked: viewModel.isItemLiked(item),
-                     imageURL: viewModel.getImageUrl(path: item.mainImagePath),
-                     frame: frame,
-                     likePressed: { item in viewModel.likePressed(for: item) })
-                .onAppear {
-                    Task {
-                        await viewModel.loadMoreContent(currentItem: item, in: data)
-                    }
-                }
-        })
-            .searchable(text: $viewModel.searchText,
-                        placement: .navigationBarDrawer(displayMode: .always),
-                        prompt: "Type title here")
-            .navigationTitle("Feed")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    NavBarSelectItemTypeButton(type: $viewModel.currentItemType)
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    NavBarSelectListTypeButton(type: $viewModel.currentListType)
+    
+    @ViewBuilder func feed<Data>(data: Data, height: CGFloat) -> some View
+    where Data: RandomAccessCollection, Data.Element: MDBItem {
+        ScrollView {
+            if data.isEmpty {
+                ProgressView()
+                    .progressViewStyle(.circular)
+                    .frame(height: height)
+                    .frame(maxWidth: .infinity)
+            } else {
+                GridView(data: data) { item in
+                    GridCell(item: item,
+                             isLiked: viewModel.isItemLiked(item),
+                             imageURL: viewModel.getImageUrl(path: item.mainImagePath),
+                             height: height,
+                             likePressed: { item in viewModel.likePressed(for: item) })
+                        .onAppear {
+                            Task {
+                                await viewModel.loadMoreContent(currentItem: item, in: data)
+                            }
+                        }
                 }
             }
-            .onAppear {
-                viewModel.reloadLikes()
+        }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                NavBarSelectItemTypeButton(type: $viewModel.currentItemType, titleMode: .right)
             }
+            ToolbarItem(placement: .principal) {
+                Text("Feed")
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                NavBarSelectListTypeButton(type: $viewModel.currentListType, titleMode: .left)
+            }
+        }
+        .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            viewModel.reloadLikes()
+        }
     }
 }
 
